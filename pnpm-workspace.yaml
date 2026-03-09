@@ -1,0 +1,55 @@
+packages:
+  - packages/*
+  - examples/cloudflareworker
+  - examples/eventbridge
+  - examples/googlepubsub
+  - examples/hatchet
+  - examples/inngest
+  - examples/kafka
+  - examples/lambda
+  - examples/nats
+  - examples/restate
+  - examples/sns
+  - examples/sqs
+  - examples/temporal
+  - examples/webhook
+
+catalog:
+  '@anthropic-ai/sdk': ^0.78.0
+  '@aws-sdk/client-sqs': ^3.1000.0
+  '@biomejs/biome': ^2.4.6
+  '@bufbuild/protobuf': ^2.11.0
+  '@bufbuild/protoc-gen-es': ^2.11.0
+  '@cloudflare/workers-types': ^4.20260305.1
+  '@connectrpc/connect': ^2.1.1
+  '@connectrpc/connect-web': ^2.1.1
+  '@google-cloud/pubsub': ^5.3.0
+  '@google/genai': ^1.44.0
+  '@hatchet-dev/typescript-sdk': ^1.15.1
+  '@langchain/core': ^1.1.30
+  '@langchain/openai': ^1.2.12
+  '@restatedev/restate-sdk': ^1.10.4
+  '@rslib/core': ^0.19.6
+  '@temporalio/client': ^1.15.0
+  '@temporalio/worker': ^1.15.0
+  '@temporalio/workflow': ^1.15.0
+  '@types/express': ^5.0.6
+  '@types/node': ^25.3.3
+  express: ^5.2.1
+  inngest: ^3.52.6
+  kafkajs: ^2.2.4
+  lefthook: ^2.1.2
+  nats: ^2.29.3
+  openai: ^6.26.0
+  tsx: ^4.21.0
+  turbo: ^2.8.13
+  typescript: ^5.9.3
+  ultracite: ^7.2.4
+
+injectWorkspacePackages: true
+
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - '@hatchet-dev/typescript-sdk'
+  - esbuild
+  - lefthook

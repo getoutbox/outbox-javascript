@@ -1,0 +1,13 @@
+version: v2
+clean: true
+managed:
+  enabled: true
+plugins:
+  - remote: buf.build/bufbuild/es:v2.11.0
+    out: packages/sdk/src/gen
+    include_imports: true
+inputs:
+  - directory: ../../proto
+    paths:
+      - ../../proto/outbox/v1
+      - ../../proto/outbox/backend/v1
