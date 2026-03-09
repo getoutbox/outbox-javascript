@@ -1,0 +1,27 @@
+{
+  "name": "@outbox/examples-eventbridge",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start:anthropic": "tsx --env-file=.env anthropic.ts",
+    "start:gemini": "tsx --env-file=.env gemini.ts",
+    "start:langchain": "tsx --env-file=.env langchain.ts",
+    "start:openai": "tsx --env-file=.env openai.ts",
+    "start:xai": "tsx --env-file=.env xai.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "catalog:",
+    "@google/genai": "catalog:",
+    "@langchain/core": "catalog:",
+    "@langchain/openai": "catalog:",
+    "@outbox-sdk/outbox": "workspace:*",
+    "openai": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

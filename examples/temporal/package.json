@@ -1,0 +1,29 @@
+{
+  "name": "@outbox/examples-temporal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start:anthropic": "tsx --env-file=anthropic/.env anthropic/worker.ts",
+    "start:gemini": "tsx --env-file=gemini/.env gemini/worker.ts",
+    "start:langchain": "tsx --env-file=langchain/.env langchain/worker.ts",
+    "start:openai": "tsx --env-file=openai/.env openai/worker.ts",
+    "start:xai": "tsx --env-file=xai/.env xai/worker.ts",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "catalog:",
+    "@google/genai": "catalog:",
+    "@langchain/core": "catalog:",
+    "@langchain/openai": "catalog:",
+    "@outbox-sdk/outbox": "workspace:*",
+    "@temporalio/worker": "catalog:",
+    "@temporalio/workflow": "catalog:",
+    "openai": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}
