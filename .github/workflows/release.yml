@@ -139,6 +139,8 @@ jobs:
           node-version-file: .node-version
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
+      - name: Upgrade npm
+        run: npm install -g npm@latest
       - name: Install dependencies
         run: pnpm install
       - name: Build
