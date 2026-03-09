@@ -8,6 +8,10 @@ on:
         required: true
         type: string
 
+concurrency:
+  group: release-notes-${{ github.event.inputs.tag }}
+  cancel-in-progress: true
+
 jobs:
   enhance:
     name: Enhance release notes with Claude
