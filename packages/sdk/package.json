@@ -1,6 +1,6 @@
 {
   "name": "@outbox-sdk/outbox",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Outbox Human Interaction SDK",
   "repository": {
     "type": "git",
