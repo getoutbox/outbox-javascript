@@ -1,11 +1,26 @@
 {
   "name": "@outbox-sdk/outbox",
   "version": "0.1.0",
-  "description": "Outbox Human Interaction SDK",
+  "description": "JavaScript/TypeScript SDK for Outbox — a unified messaging API for AI agents",
+  "license": "MIT",
+  "author": "Outbox <hello@outbox.chat> (https://outbox.chat)",
+  "homepage": "https://outbox.chat",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/getoutbox/outbox-javascript.git"
+    "url": "git+https://github.com/getoutbox/outbox-javascript.git",
+    "directory": "packages/sdk"
   },
+  "bugs": {
+    "url": "https://github.com/getoutbox/outbox-javascript/issues"
+  },
+  "keywords": [
+    "outbox",
+    "messaging",
+    "sdk",
+    "ai",
+    "slack",
+    "whatsapp"
+  ],
   "type": "module",
   "exports": {
     ".": {
