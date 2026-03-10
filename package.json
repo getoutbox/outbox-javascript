@@ -1,6 +1,11 @@
 {
   "name": "outbox-javascript",
   "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getoutbox/outbox-javascript.git"
+  },
   "scripts": {
     "build": "turbo run build",
     "prepare": "test -n \"$CI\" || lefthook install",
