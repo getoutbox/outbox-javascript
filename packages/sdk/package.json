@@ -1,6 +1,6 @@
 {
   "name": "@outbox-sdk/outbox",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "JavaScript/TypeScript SDK for Outbox — a unified messaging API for AI agents",
   "license": "MIT",
   "author": "Outbox <hello@outbox.chat> (https://outbox.chat)",
