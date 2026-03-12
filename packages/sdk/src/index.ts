@@ -1,17 +1,17 @@
 import { createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-
+import { Operations } from "./gen/google/longrunning/operations_pb.js";
 import { AccountService } from "./gen/outbox/v1/account_pb.js";
-import { ChannelService } from "./gen/outbox/v1/channel_pb.js";
 import { ConnectorService } from "./gen/outbox/v1/connector_pb.js";
 import { DestinationService } from "./gen/outbox/v1/destination_pb.js";
 import { MessageService } from "./gen/outbox/v1/message_pb.js";
+import { TemplateService } from "./gen/outbox/v1/template_pb.js";
 
 import { AccountsNamespace } from "./namespaces/accounts.js";
-import { ChannelsNamespace } from "./namespaces/channels.js";
 import { ConnectorsNamespace } from "./namespaces/connectors.js";
 import { DestinationsNamespace } from "./namespaces/destinations.js";
 import { MessagesNamespace } from "./namespaces/messages.js";
+import { TemplatesNamespace } from "./namespaces/templates.js";
 
 // Helpers
 export {
@@ -29,17 +29,13 @@ export type {
   ListAccountsResult,
   UpdateAccountInput,
 } from "./namespaces/accounts.js";
-export type {
-  ListChannelsInput,
-  ListChannelsResult,
-} from "./namespaces/channels.js";
 // Namespace input/output types
 export type {
   CreateConnectorInput,
   CreateConnectorResult,
+  CreateManagedConnectorInput,
   ListConnectorsInput,
   ListConnectorsResult,
-  ReauthorizeConnectorResult,
   UpdateConnectorInput,
 } from "./namespaces/connectors.js";
 export type {
@@ -65,12 +61,15 @@ export type {
   UpdateMessageInput,
   WithTypingInput,
 } from "./namespaces/messages.js";
+export type {
+  CreateTemplateInput,
+  ListTemplatesOptions,
+  ListTemplatesResult,
+} from "./namespaces/templates.js";
 // Resource and event types
 export type {
   Account,
   AzureServiceBusTarget,
-  Channel,
-  ChannelCapabilities,
   CloudflareWorkerTarget,
   Connector,
   ConnectorChannelConfig,
@@ -90,17 +89,23 @@ export type {
   NatsTarget,
   RabbitMqTarget,
   ReadReceiptEvent,
+  ReauthorizeConnectorResult,
   RedisTarget,
   RestateTarget,
   SmtpTarget,
   SnsTarget,
   SqsTarget,
+  Template,
   TemporalTarget,
   TypingIndicatorEvent,
   WebhookTarget,
 } from "./types.js";
+// Note: ProvisionedResourceState is intentionally omitted — it appears in
+// CreateManagedConnectorMetadata (LRO metadata) which is silently discarded by the SDK.
 export {
   AccountSource,
+  ConnectorKind,
+  ConnectorReadiness,
   ConnectorState,
   DestinationEventType,
   DestinationPayloadFormat,
@@ -113,6 +118,8 @@ export {
   MessageDeliveryStatus,
   MessageDirection,
   MessagePartDisposition,
+  TemplateCategory,
+  TemplateStatus,
 } from "./types.js";
 
 export interface OutboxClientOptions {
@@ -124,10 +131,10 @@ export interface OutboxClientOptions {
 
 export class OutboxClient {
   readonly accounts: AccountsNamespace;
-  readonly channels: ChannelsNamespace;
   readonly connectors: ConnectorsNamespace;
   readonly destinations: DestinationsNamespace;
   readonly messages: MessagesNamespace;
+  readonly templates: TemplatesNamespace;
 
   constructor(options: OutboxClientOptions) {
     const { apiKey, baseUrl = "https://api.outbox.chat" } = options;
@@ -145,17 +152,18 @@ export class OutboxClient {
     this.accounts = new AccountsNamespace(
       createClient(AccountService, transport)
     );
-    this.channels = new ChannelsNamespace(
-      createClient(ChannelService, transport)
-    );
     this.connectors = new ConnectorsNamespace(
-      createClient(ConnectorService, transport)
+      createClient(ConnectorService, transport),
+      createClient(Operations, transport)
     );
     this.destinations = new DestinationsNamespace(
       createClient(DestinationService, transport)
     );
     this.messages = new MessagesNamespace(
       createClient(MessageService, transport)
+    );
+    this.templates = new TemplatesNamespace(
+      createClient(TemplateService, transport)
     );
   }
 }

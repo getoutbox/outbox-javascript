@@ -3,6 +3,24 @@
 export const AccountSource = { UNSPECIFIED: 0, API: 1, AUTO: 2 } as const;
 export type AccountSource = (typeof AccountSource)[keyof typeof AccountSource];
 
+export const ConnectorKind = {
+  UNSPECIFIED: 0,
+  MANAGED: 1,
+  USER: 2,
+  BOT: 3,
+} as const;
+export type ConnectorKind = (typeof ConnectorKind)[keyof typeof ConnectorKind];
+
+export const ConnectorReadiness = {
+  UNSPECIFIED: 0,
+  READY: 1,
+  PENDING_COMPLIANCE: 2,
+  RESOURCE_NOT_ACTIVE: 3,
+  RESOURCE_SUSPENDED: 4,
+} as const;
+export type ConnectorReadiness =
+  (typeof ConnectorReadiness)[keyof typeof ConnectorReadiness];
+
 export const ConnectorState = {
   UNSPECIFIED: 0,
   ACTIVE: 1,
@@ -12,6 +30,26 @@ export const ConnectorState = {
 } as const;
 export type ConnectorState =
   (typeof ConnectorState)[keyof typeof ConnectorState];
+
+export const TemplateStatus = {
+  UNSPECIFIED: 0,
+  PENDING: 1,
+  APPROVED: 2,
+  REJECTED: 3,
+  PAUSED: 4,
+  DISABLED: 5,
+} as const;
+export type TemplateStatus =
+  (typeof TemplateStatus)[keyof typeof TemplateStatus];
+
+export const TemplateCategory = {
+  UNSPECIFIED: 0,
+  UTILITY: 1,
+  MARKETING: 2,
+  AUTHENTICATION: 3,
+} as const;
+export type TemplateCategory =
+  (typeof TemplateCategory)[keyof typeof TemplateCategory];
 
 export const DestinationEventType = {
   UNSPECIFIED: 0,
@@ -236,22 +274,6 @@ export type DestinationTarget =
   | { case: "webhook"; value: WebhookTarget }
   | { case: undefined; value: undefined };
 
-export interface ChannelCapabilities {
-  deletions: boolean;
-  edits: boolean;
-  groups: boolean;
-  reactions: boolean;
-  readReceipts: boolean;
-  supportedContentTypes: string[];
-  typingIndicators: boolean;
-}
-
-export interface Channel {
-  capabilities?: ChannelCapabilities;
-  createTime?: Date;
-  id: string;
-}
-
 export interface Account {
   // Empty for auto-created accounts (source=SOURCE_AUTO) until claimed via ClaimAccount.
   contactId?: string;
@@ -264,16 +286,37 @@ export interface Account {
 }
 
 export interface Connector {
-  // account is populated by the backend after creation or OAuth completion.
-  // Present when state is ACTIVE or INACTIVE.
-  account?: Account;
   channelConfig: ConnectorChannelConfig;
   createTime?: Date;
+  displayName: string;
   // Human-readable error detail when state is ERROR.
   errorMessage?: string;
   id: string;
+  kind: ConnectorKind;
+  provisionedResources: string[];
+  readiness: ConnectorReadiness;
   state: ConnectorState;
   tags: string[];
+  updateTime?: Date;
+  webhookUrl: string;
+}
+
+export interface ReauthorizeConnectorResult {
+  authorizationUrl?: string;
+  connector: Connector;
+}
+
+export interface Template {
+  category: TemplateCategory;
+  componentsJson: string;
+  connectorId: string;
+  createTime?: Date;
+  externalId?: string;
+  id: string;
+  language: string;
+  rejectionReason?: string;
+  status: TemplateStatus;
+  templateName: string;
   updateTime?: Date;
 }
 

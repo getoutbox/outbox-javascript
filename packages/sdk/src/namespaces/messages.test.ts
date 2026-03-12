@@ -2,9 +2,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MessageDeletionScope, MessagePartDisposition } from "../types.js";
 import { MessagesNamespace } from "./messages.js";
 
-const _UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-
 const protoAccount = {
   name: "accounts/acc1",
   contactId: "c1",

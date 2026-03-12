@@ -5,6 +5,8 @@ import {
   destinationName,
   messageName,
   parseId,
+  templateName,
+  templateParent,
 } from "./resource-names.js";
 
 describe("resource name constructors", () => {
@@ -22,6 +24,16 @@ describe("resource name constructors", () => {
 
   it("accountName prefixes with accounts/", () => {
     expect(accountName("acc1")).toBe("accounts/acc1");
+  });
+
+  it("templateName builds connectors/<connectorId>/templates/<templateId>", () => {
+    expect(templateName("conn1", "tmpl1")).toBe(
+      "connectors/conn1/templates/tmpl1"
+    );
+  });
+
+  it("templateParent builds connectors/<connectorId>", () => {
+    expect(templateParent("conn1")).toBe("connectors/conn1");
   });
 });
 

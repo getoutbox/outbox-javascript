@@ -1,6 +1,5 @@
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import type { Account as ProtoAccount } from "../gen/outbox/v1/account_pb.js";
-import type { Channel as ProtoChannel } from "../gen/outbox/v1/channel_pb.js";
 import type { Connector as ProtoConnector } from "../gen/outbox/v1/connector_pb.js";
 import type {
   DeliveryEvent as ProtoDeliveryEvent,
@@ -13,11 +12,13 @@ import type {
   ReadReceiptEvent as ProtoReadReceiptEvent,
   TypingIndicatorEvent as ProtoTypingIndicatorEvent,
 } from "../gen/outbox/v1/message_pb.js";
+import type { Template as ProtoTemplate } from "../gen/outbox/v1/template_pb.js";
 import type {
   Account,
   AccountSource,
-  Channel,
   Connector,
+  ConnectorKind,
+  ConnectorReadiness,
   ConnectorState,
   DeliveryEvent,
   Destination,
@@ -33,6 +34,9 @@ import type {
   MessagePart,
   MessagePartDisposition,
   ReadReceiptEvent,
+  Template,
+  TemplateCategory,
+  TemplateStatus,
   TypingIndicatorEvent,
 } from "../types.js";
 import { parseId } from "./resource-names.js";
@@ -44,32 +48,41 @@ function protoTimestamp(ts: Timestamp | undefined): Date | undefined {
   return new Date(Number(ts.seconds) * 1000 + Math.round(ts.nanos / 1_000_000));
 }
 
-export function mapChannel(p: ProtoChannel): Channel {
-  return {
-    id: parseId(p.name),
-    capabilities: p.capabilities
-      ? {
-          groups: p.capabilities.groups,
-          reactions: p.capabilities.reactions,
-          edits: p.capabilities.edits,
-          deletions: p.capabilities.deletions,
-          readReceipts: p.capabilities.readReceipts,
-          typingIndicators: p.capabilities.typingIndicators,
-          supportedContentTypes: [...p.capabilities.supportedContentTypes],
-        }
-      : undefined,
-    createTime: protoTimestamp(p.createTime),
-  };
-}
-
 export function mapConnector(p: ProtoConnector): Connector {
   return {
     id: parseId(p.name),
-    account: p.account ? mapAccount(p.account) : undefined,
+    kind: p.kind as ConnectorKind,
     state: p.state as ConnectorState,
+    readiness: p.readiness as ConnectorReadiness,
+    provisionedResources: p.provisionedResources.map(parseId),
+    webhookUrl: p.webhookUrl,
+    displayName: p.displayName,
     channelConfig: p.channelConfig,
     tags: [...p.tags],
     errorMessage: p.errorMessage || undefined,
+    createTime: protoTimestamp(p.createTime),
+    updateTime: protoTimestamp(p.updateTime),
+  };
+}
+
+export function mapTemplate(p: ProtoTemplate): Template {
+  // name format: "connectors/{connectorId}/templates/{id}"
+  const parts = p.name.split("/");
+  if (parts.length < 4 || !parts[1] || !parts[3]) {
+    throw new Error(`Invalid template resource name: "${p.name}"`);
+  }
+  const connectorId = parts[1];
+  const id = parts[3];
+  return {
+    id,
+    connectorId,
+    templateName: p.templateName,
+    language: p.language,
+    category: p.category as TemplateCategory,
+    componentsJson: p.componentsJson,
+    status: p.status as TemplateStatus,
+    rejectionReason: p.rejectionReason || undefined,
+    externalId: p.externalId || undefined,
     createTime: protoTimestamp(p.createTime),
     updateTime: protoTimestamp(p.updateTime),
   };

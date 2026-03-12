@@ -1,11 +1,18 @@
+import { anyUnpack } from "@bufbuild/protobuf/wkt";
 import type { Client } from "@connectrpc/connect";
-import type {
-  ConnectorService,
-  Connector as ProtoConnector,
+import type { Operations } from "../gen/google/longrunning/operations_pb.js";
+import {
+  ConnectorSchema,
+  type ConnectorService,
+  type Connector as ProtoConnector,
 } from "../gen/outbox/v1/connector_pb.js";
 import { mapConnector } from "../internal/mappers.js";
 import { connectorName } from "../internal/resource-names.js";
-import type { Connector, ConnectorChannelConfig } from "../types.js";
+import type {
+  Connector,
+  ConnectorChannelConfig,
+  ReauthorizeConnectorResult,
+} from "../types.js";
 
 export interface ListConnectorsResult {
   items: Connector[];
@@ -15,6 +22,7 @@ export interface ListConnectorsResult {
 
 export interface CreateConnectorInput {
   channelConfig: ConnectorChannelConfig;
+  consentAcknowledged?: boolean;
   requestId?: string;
   tags?: string[];
 }
@@ -25,10 +33,6 @@ export interface CreateConnectorResult {
   // Empty string for direct-creation channels.
   authorizationUrl?: string;
   connector: Connector;
-}
-
-export interface ReauthorizeConnectorResult {
-  authorizationUrl?: string;
 }
 
 export interface UpdateConnectorInput {
@@ -42,6 +46,14 @@ export interface ListConnectorsInput {
   orderBy?: string;
   pageSize?: number;
   pageToken?: string;
+}
+
+export interface CreateManagedConnectorInput {
+  channel: string;
+  filters?: Record<string, string>;
+  requestId?: string;
+  tags?: string[];
+  webhookUrl?: string;
 }
 
 function assertConnector(
@@ -64,16 +76,22 @@ function channelConfigPaths(channelConfig: ConnectorChannelConfig): string[] {
 
 export class ConnectorsNamespace {
   readonly #client: Client<typeof ConnectorService>;
+  readonly #operations: Client<typeof Operations> | undefined;
 
-  constructor(client: Client<typeof ConnectorService>) {
+  constructor(
+    client: Client<typeof ConnectorService>,
+    operations?: Client<typeof Operations>
+  ) {
     this.#client = client;
+    this.#operations = operations;
   }
 
   async create(input: CreateConnectorInput): Promise<CreateConnectorResult> {
-    const { requestId, channelConfig, tags } = input;
+    const { requestId, channelConfig, tags, consentAcknowledged } = input;
     const res = await this.#client.createConnector({
       connector: { channelConfig, tags },
       requestId,
+      consentAcknowledged,
     });
     return {
       connector: mapConnector(
@@ -121,7 +139,12 @@ export class ConnectorsNamespace {
     const res = await this.#client.reauthorizeConnector({
       name: connectorName(id),
     });
-    return { authorizationUrl: res.authorizationUrl || undefined };
+    return {
+      connector: mapConnector(
+        assertConnector(res.connector, "reauthorizeConnector")
+      ),
+      authorizationUrl: res.authorizationUrl || undefined,
+    };
   }
 
   async activate(id: string): Promise<Connector> {
@@ -136,5 +159,68 @@ export class ConnectorsNamespace {
       name: connectorName(id),
     });
     return mapConnector(assertConnector(res.connector, "deactivateConnector"));
+  }
+
+  async verify(
+    id: string,
+    code: string,
+    password?: string
+  ): Promise<Connector> {
+    const res = await this.#client.verifyConnector({
+      name: connectorName(id),
+      code,
+      password: password ?? "",
+    });
+    return mapConnector(assertConnector(res.connector, "verifyConnector"));
+  }
+
+  async detach(id: string): Promise<Connector> {
+    const res = await this.#client.detachProvisionedResource({
+      name: connectorName(id),
+    });
+    return mapConnector(
+      assertConnector(res.connector, "detachProvisionedResource")
+    );
+  }
+
+  async createManaged(input: CreateManagedConnectorInput): Promise<Connector> {
+    if (!this.#operations) {
+      throw new Error(
+        "createManaged requires an operations client — instantiate OutboxClient to use this method"
+      );
+    }
+    let op = await this.#client.createManagedConnector({
+      channel: input.channel,
+      filters: input.filters ?? {},
+      webhookUrl: input.webhookUrl ?? "",
+      tags: input.tags ?? [],
+      requestId: input.requestId ?? "",
+    });
+
+    while (!op.done) {
+      await new Promise<void>((r) => setTimeout(r, 2000));
+      op = await this.#operations.getOperation({ name: op.name });
+    }
+
+    if (op.result.case === "error") {
+      const err = op.result.value;
+      throw new Error(
+        `createManagedConnector failed: ${err.message} (code ${err.code})`
+      );
+    }
+
+    if (op.result.case !== "response") {
+      throw new Error(
+        "createManagedConnector: operation completed with no result"
+      );
+    }
+
+    const connector = anyUnpack(op.result.value, ConnectorSchema);
+    if (!connector) {
+      throw new Error(
+        "createManagedConnector: failed to unpack Connector from operation response"
+      );
+    }
+    return mapConnector(connector);
   }
 }
