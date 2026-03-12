@@ -35,7 +35,7 @@ export declare type Account = Message<"outbox.v1.Account"> & {
 
   /**
    * Platform-specific identifier for the external account.
-   * Format: "{channel}:{id}" — e.g., "whatsapp:+15551234567", "apns:device-token".
+   * Format: "{channel}:{id}" — e.g., "whatsapp:+15551234567", "telegram:123456789".
    * Cannot be changed after creation.
    *
    * @generated from field: string external_id = 3;
@@ -369,7 +369,7 @@ export declare const DeleteAccountResponseSchema: GenMessage<DeleteAccountRespon
 export declare type ResolveAccountRequest = Message<"outbox.v1.ResolveAccountRequest"> & {
   /**
    * Platform-specific external identifier to resolve.
-   * Format: "{channel}:{id}" — e.g., "whatsapp:+15551234567", "apns:device-token".
+   * Format: "{channel}:{id}" — e.g., "whatsapp:+15551234567", "telegram:123456789".
    *
    * @generated from field: string external_id = 1;
    */

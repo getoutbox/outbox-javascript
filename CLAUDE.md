@@ -1,7 +1,3 @@
-# Git conventions
-
-Use semantic commit prefixes for commit messages and PR titles (e.g. `feat:`, `fix:`, `docs:`, `chore:`).
-
 # SDK conventions
 
 - Never expose resource names. Always use the IDs.

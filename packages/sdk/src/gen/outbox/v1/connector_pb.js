@@ -9,146 +9,615 @@ import { file_google_api_client } from "../../google/api/client_pb";
 import { file_google_api_field_behavior } from "../../google/api/field_behavior_pb";
 import { file_google_api_field_info } from "../../google/api/field_info_pb";
 import { file_google_api_resource } from "../../google/api/resource_pb";
+import { file_google_longrunning_operations } from "../../google/longrunning/operations_pb";
 import { file_google_protobuf_field_mask, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
-import { file_outbox_v1_account } from "./account_pb";
-import { file_outbox_v1_connector_config } from "./connector_config_pb";
 
 /**
  * Describes the file outbox/v1/connector.proto.
  */
 export const file_outbox_v1_connector = /*@__PURE__*/
-  fileDesc("ChlvdXRib3gvdjEvY29ubmVjdG9yLnByb3RvEglvdXRib3gudjEi8RMKCUNvbm5lY3RvchIRCgRuYW1lGAEgASgJQgPgQQgSKAoHYWNjb3VudBgCIAEoCzISLm91dGJveC52MS5BY2NvdW50QgPgQQMSLgoFc3RhdGUYAyABKA4yGi5vdXRib3gudjEuQ29ubmVjdG9yLlN0YXRlQgPgQQMSEQoEdGFncxgEIAMoCUID4EEBEjQKC2NyZWF0ZV90aW1lGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEID4EEDEjQKC3VwZGF0ZV90aW1lGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEID4EEDEhoKDWVycm9yX21lc3NhZ2UYByABKAlCA+BBAxI5CgxhY3Rpdml0eV9wdWIYCCABKAsyHC5vdXRib3gudjEuQWN0aXZpdHlQdWJDb25maWdCA+BBAUgAEioKBGFwbnMYCSABKAsyFS5vdXRib3gudjEuQXBuc0NvbmZpZ0ID4EEBSAASPQoOYXBwbGVfbWVzc2FnZXMYCiABKAsyHi5vdXRib3gudjEuQXBwbGVNZXNzYWdlc0NvbmZpZ0ID4EEBSAASMAoHYmx1ZXNreRgLIAEoCzIYLm91dGJveC52MS5CbHVlc2t5Q29uZmlnQgPgQQFIABIwCgdkaXNjb3JkGAwgASgLMhgub3V0Ym94LnYxLkRpc2NvcmRDb25maWdCA+BBAUgAEiwKBWVtYWlsGA0gASgLMhYub3V0Ym94LnYxLkVtYWlsQ29uZmlnQgPgQQFIABIoCgNmY20YDiABKAsyFC5vdXRib3gudjEuRmNtQ29uZmlnQgPgQQFIABI0CglmcmVzaGNoYXQYDyABKAsyGi5vdXRib3gudjEuRnJlc2hjaGF0Q29uZmlnQgPgQQFIABI3Cgtnb29nbGVfY2hhdBgQIAEoCzIbLm91dGJveC52MS5Hb29nbGVDaGF0Q29uZmlnQgPgQQFIABIwCgdodWJzcG90GBEgASgLMhgub3V0Ym94LnYxLkh1YnNwb3RDb25maWdCA+BBAUgAEi0KBmluX2FwcBgSIAEoCzIWLm91dGJveC52MS5JbkFwcENvbmZpZ0ID4EEBSAASNAoJaW5zdGFncmFtGBMgASgLMhoub3V0Ym94LnYxLkluc3RhZ3JhbUNvbmZpZ0ID4EEBSAASMgoIaW50ZXJjb20YFCABKAsyGS5vdXRib3gudjEuSW50ZXJjb21Db25maWdCA+BBAUgAEjUKCmtha2FvX3RhbGsYFSABKAsyGi5vdXRib3gudjEuS2FrYW9UYWxrQ29uZmlnQgPgQQFIABIqCgRsYXJrGBYgASgLMhUub3V0Ym94LnYxLkxhcmtDb25maWdCA+BBAUgAEioKBGxpbmUYFyABKAsyFS5vdXRib3gudjEuTGluZUNvbmZpZ0ID4EEBSAASMgoIbGlua2VkaW4YGCABKAsyGS5vdXRib3gudjEuTGlua2VkaW5Db25maWdCA+BBAUgAEjMKCWxpdmVfY2hhdBgZIAEoCzIZLm91dGJveC52MS5MaXZlQ2hhdENvbmZpZ0ID4EEBSAASLgoGbWF0cml4GBogASgLMhcub3V0Ym94LnYxLk1hdHJpeENvbmZpZ0ID4EEBSAASNgoKbWF0dGVybW9zdBgbIAEoCzIbLm91dGJveC52MS5NYXR0ZXJtb3N0Q29uZmlnQgPgQQFIABI0CgltZXNzZW5nZXIYHCABKAsyGi5vdXRib3gudjEuTWVzc2VuZ2VyQ29uZmlnQgPgQQFIABIqCgRtcXR0GB0gASgLMhUub3V0Ym94LnYxLk1xdHRDb25maWdCA+BBAUgAEigKA3JjcxgeIAEoCzIULm91dGJveC52MS5SY3NDb25maWdCA+BBAUgAEi4KBnJlZGRpdBgfIAEoCzIXLm91dGJveC52MS5SZWRkaXRDb25maWdCA+BBAUgAEi4KBnNpZ25hbBggIAEoCzIXLm91dGJveC52MS5TaWduYWxDb25maWdCA+BBAUgAEiwKBXNsYWNrGCEgASgLMhYub3V0Ym94LnYxLlNsYWNrQ29uZmlnQgPgQQFIABIoCgNzbXMYIiABKAsyFC5vdXRib3gudjEuU21zQ29uZmlnQgPgQQFIABIsCgV0ZWFtcxgjIAEoCzIWLm91dGJveC52MS5UZWFtc0NvbmZpZ0ID4EEBSAASMgoIdGVsZWdyYW0YJCABKAsyGS5vdXRib3gudjEuVGVsZWdyYW1Db25maWdCA+BBAUgAEjAKB3RocmVhZHMYJSABKAsyGC5vdXRib3gudjEuVGhyZWFkc0NvbmZpZ0ID4EEBSAASLgoGdGlrdG9rGCYgASgLMhcub3V0Ym94LnYxLlRpa3Rva0NvbmZpZ0ID4EEBSAASLgoGdHdpdGNoGCcgASgLMhcub3V0Ym94LnYxLlR3aXRjaENvbmZpZ0ID4EEBSAASLAoFdmliZXIYKCABKAsyFi5vdXRib3gudjEuVmliZXJDb25maWdCA+BBAUgAEiwKBXdlYmV4GCkgASgLMhYub3V0Ym94LnYxLldlYmV4Q29uZmlnQgPgQQFIABIxCgh3ZWJfcHVzaBgqIAEoCzIYLm91dGJveC52MS5XZWJQdXNoQ29uZmlnQgPgQQFIABIuCgZ3ZWNoYXQYKyABKAsyFy5vdXRib3gudjEuV2VjaGF0Q29uZmlnQgPgQQFIABIyCgh3aGF0c2FwcBgsIAEoCzIZLm91dGJveC52MS5XaGF0c0FwcENvbmZpZ0ID4EEBSAASJAoBeBgtIAEoCzISLm91dGJveC52MS5YQ29uZmlnQgPgQQFIABIqCgR4bXBwGC4gASgLMhUub3V0Ym94LnYxLlhtcHBDb25maWdCA+BBAUgAEioKBHphbG8YLyABKAsyFS5vdXRib3gudjEuWmFsb0NvbmZpZ0ID4EEBSAASMAoHemVuZGVzaxgwIAEoCzIYLm91dGJveC52MS5aZW5kZXNrQ29uZmlnQgPgQQFIABIzCgl6b29tX2NoYXQYMSABKAsyGS5vdXRib3gudjEuWm9vbUNoYXRDb25maWdCA+BBAUgAImwKBVN0YXRlEhUKEVNUQVRFX1VOU1BFQ0lGSUVEEAASEAoMU1RBVEVfQUNUSVZFEAESEgoOU1RBVEVfSU5BQ1RJVkUQAhIVChFTVEFURV9BVVRIT1JJWklORxADEg8KC1NUQVRFX0VSUk9SEAQ6SepBRgoVb3V0Ym94LmNoYXQvQ29ubmVjdG9yEhZjb25uZWN0b3JzL3tjb25uZWN0b3J9Kgpjb25uZWN0b3JzMgljb25uZWN0b3JCFwoOY2hhbm5lbF9jb25maWcSBbpIAggBIngKFkNyZWF0ZUNvbm5lY3RvclJlcXVlc3QSMgoJY29ubmVjdG9yGAEgASgLMhQub3V0Ym94LnYxLkNvbm5lY3RvckIJ4EECukgDyAEBEioKCnJlcXVlc3RfaWQYAiABKAlCFuBBAbpICNgBAXIDsAEB4ozP1wgCCAEiZwoXQ3JlYXRlQ29ubmVjdG9yUmVzcG9uc2USLAoJY29ubmVjdG9yGAEgASgLMhQub3V0Ym94LnYxLkNvbm5lY3RvckID4EEDEh4KEWF1dGhvcml6YXRpb25fdXJsGAIgASgJQgPgQQMiSQoTR2V0Q29ubmVjdG9yUmVxdWVzdBIyCgRuYW1lGAEgASgJQiTgQQL6QRcKFW91dGJveC5jaGF0L0Nvbm5lY3RvcrpIBHICEAEiRAoUR2V0Q29ubmVjdG9yUmVzcG9uc2USLAoJY29ubmVjdG9yGAEgASgLMhQub3V0Ym94LnYxLkNvbm5lY3RvckID4EEDIn4KFUxpc3RDb25uZWN0b3JzUmVxdWVzdBIgCglwYWdlX3NpemUYASABKAVCDeBBAbpIBxoFGOgHKAASFwoKcGFnZV90b2tlbhgCIAEoCUID4EEBEhMKBmZpbHRlchgDIAEoCUID4EEBEhUKCG9yZGVyX2J5GAQgASgJQgPgQQEifgoWTGlzdENvbm5lY3RvcnNSZXNwb25zZRItCgpjb25uZWN0b3JzGAEgAygLMhQub3V0Ym94LnYxLkNvbm5lY3RvckID4EEDEhwKD25leHRfcGFnZV90b2tlbhgCIAEoCUID4EEDEhcKCnRvdGFsX3NpemUYAyABKAVCA+BBAyKCAQoWVXBkYXRlQ29ubmVjdG9yUmVxdWVzdBIyCgljb25uZWN0b3IYASABKAsyFC5vdXRib3gudjEuQ29ubmVjdG9yQgngQQK6SAPIAQESNAoLdXBkYXRlX21hc2sYAiABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrQgPgQQEiRwoXVXBkYXRlQ29ubmVjdG9yUmVzcG9uc2USLAoJY29ubmVjdG9yGAEgASgLMhQub3V0Ym94LnYxLkNvbm5lY3RvckID4EEDIkwKFkRlbGV0ZUNvbm5lY3RvclJlcXVlc3QSMgoEbmFtZRgBIAEoCUIk4EEC+kEXChVvdXRib3guY2hhdC9Db25uZWN0b3K6SARyAhABIhkKF0RlbGV0ZUNvbm5lY3RvclJlc3BvbnNlIk4KGEFjdGl2YXRlQ29ubmVjdG9yUmVxdWVzdBIyCgRuYW1lGAEgASgJQiTgQQL6QRcKFW91dGJveC5jaGF0L0Nvbm5lY3RvcrpIBHICEAEiSQoZQWN0aXZhdGVDb25uZWN0b3JSZXNwb25zZRIsCgljb25uZWN0b3IYASABKAsyFC5vdXRib3gudjEuQ29ubmVjdG9yQgPgQQMiUAoaRGVhY3RpdmF0ZUNvbm5lY3RvclJlcXVlc3QSMgoEbmFtZRgBIAEoCUIk4EEC+kEXChVvdXRib3guY2hhdC9Db25uZWN0b3K6SARyAhABIksKG0RlYWN0aXZhdGVDb25uZWN0b3JSZXNwb25zZRIsCgljb25uZWN0b3IYASABKAsyFC5vdXRib3gudjEuQ29ubmVjdG9yQgPgQQMiUQobUmVhdXRob3JpemVDb25uZWN0b3JSZXF1ZXN0EjIKBG5hbWUYASABKAlCJOBBAvpBFwoVb3V0Ym94LmNoYXQvQ29ubmVjdG9yukgEcgIQASI+ChxSZWF1dGhvcml6ZUNvbm5lY3RvclJlc3BvbnNlEh4KEWF1dGhvcml6YXRpb25fdXJsGAEgASgJQgPgQQMy0QYKEENvbm5lY3RvclNlcnZpY2USZgoPQ3JlYXRlQ29ubmVjdG9yEiEub3V0Ym94LnYxLkNyZWF0ZUNvbm5lY3RvclJlcXVlc3QaIi5vdXRib3gudjEuQ3JlYXRlQ29ubmVjdG9yUmVzcG9uc2UiDNpBCWNvbm5lY3RvchJYCgxHZXRDb25uZWN0b3ISHi5vdXRib3gudjEuR2V0Q29ubmVjdG9yUmVxdWVzdBofLm91dGJveC52MS5HZXRDb25uZWN0b3JSZXNwb25zZSIH2kEEbmFtZRJaCg5MaXN0Q29ubmVjdG9ycxIgLm91dGJveC52MS5MaXN0Q29ubmVjdG9yc1JlcXVlc3QaIS5vdXRib3gudjEuTGlzdENvbm5lY3RvcnNSZXNwb25zZSID2kEAEnIKD1VwZGF0ZUNvbm5lY3RvchIhLm91dGJveC52MS5VcGRhdGVDb25uZWN0b3JSZXF1ZXN0GiIub3V0Ym94LnYxLlVwZGF0ZUNvbm5lY3RvclJlc3BvbnNlIhjaQRVjb25uZWN0b3IsdXBkYXRlX21hc2sSYQoPRGVsZXRlQ29ubmVjdG9yEiEub3V0Ym94LnYxLkRlbGV0ZUNvbm5lY3RvclJlcXVlc3QaIi5vdXRib3gudjEuRGVsZXRlQ29ubmVjdG9yUmVzcG9uc2UiB9pBBG5hbWUScAoUUmVhdXRob3JpemVDb25uZWN0b3ISJi5vdXRib3gudjEuUmVhdXRob3JpemVDb25uZWN0b3JSZXF1ZXN0Gicub3V0Ym94LnYxLlJlYXV0aG9yaXplQ29ubmVjdG9yUmVzcG9uc2UiB9pBBG5hbWUSZwoRQWN0aXZhdGVDb25uZWN0b3ISIy5vdXRib3gudjEuQWN0aXZhdGVDb25uZWN0b3JSZXF1ZXN0GiQub3V0Ym94LnYxLkFjdGl2YXRlQ29ubmVjdG9yUmVzcG9uc2UiB9pBBG5hbWUSbQoTRGVhY3RpdmF0ZUNvbm5lY3RvchIlLm91dGJveC52MS5EZWFjdGl2YXRlQ29ubmVjdG9yUmVxdWVzdBomLm91dGJveC52MS5EZWFjdGl2YXRlQ29ubmVjdG9yUmVzcG9uc2UiB9pBBG5hbWVCUFpJZ2l0aHViLmNvbS9nZXRvdXRib3gvb3V0Ym94LWludGVybmFsL2dvL291dGJveC1hcGkvZ2VuL291dGJveC92MTtvdXRib3h2MZIDAggCYghlZGl0aW9uc3DoBw", [file_buf_validate_validate, file_google_api_client, file_google_api_field_behavior, file_google_api_field_info, file_google_api_resource, file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_outbox_v1_account, file_outbox_v1_connector_config]);
+  fileDesc("ChlvdXRib3gvdjEvY29ubmVjdG9yLnByb3RvEglvdXRib3gudjEiNQoPT3V0Ym94U21zQ29uZmlnEg8KB2NvdW50cnkYASABKAkSEQoJYXJlYV9jb2RlGAIgASgJIjYKD091dGJveFJjc0NvbmZpZxIPCgdjb3VudHJ5GAEgASgJEhIKCmJyYW5kX25hbWUYAiABKAkiQwoUT3V0Ym94V2hhdHNBcHBDb25maWcSFAoMZGlzcGxheV9uYW1lGAEgASgJEhUKDWJ1c2luZXNzX25hbWUYAiABKAkiZwoRT3V0Ym94RW1haWxDb25maWcSDwoHYWRkcmVzcxgBIAEoCRIRCglmcm9tX25hbWUYAiABKAkSLgoLZG5zX3JlY29yZHMYAyADKAsyFC5vdXRib3gudjEuRG5zUmVjb3JkQgPgQQMiVgoJRG5zUmVjb3JkEgwKBHR5cGUYASABKAkSDAoEbmFtZRgCIAEoCRINCgV2YWx1ZRgDIAEoCRIQCghwcmlvcml0eRgEIAEoBRIMCgRub3RlGAUgASgJIisKEVRlbGVncmFtQm90Q29uZmlnEhYKCWJvdF90b2tlbhgBIAEoCUID4EEEIioKEERpc2NvcmRCb3RDb25maWcSFgoJYm90X3Rva2VuGAEgASgJQgPgQQQiRQoOU2xhY2tCb3RDb25maWcSFgoJYm90X3Rva2VuGAEgASgJQgPgQQQSGwoOc2lnbmluZ19zZWNyZXQYAiABKAlCA+BBBCJjChBTbGFja09BdXRoQ29uZmlnEhYKCWNsaWVudF9pZBgBIAEoCUID4EEEEhoKDWNsaWVudF9zZWNyZXQYAiABKAlCA+BBBBIbCg5zaWduaW5nX3NlY3JldBgDIAEoCUID4EEEIlwKDlRlYW1zQm90Q29uZmlnEhYKCXRlbmFudF9pZBgBIAEoCUID4EEEEhYKCWNsaWVudF9pZBgCIAEoCUID4EEEEhoKDWNsaWVudF9zZWNyZXQYAyABKAlCA+BBBCIUChJNZXNzZW5nZXJCb3RDb25maWciFAoSSW5zdGFncmFtQm90Q29uZmlnIikKDlZpYmVyQm90Q29uZmlnEhcKCmF1dGhfdG9rZW4YASABKAlCA+BBBCJICg1MaW5lQm90Q29uZmlnEhoKDWNoYW5uZWxfdG9rZW4YASABKAlCA+BBBBIbCg5jaGFubmVsX3NlY3JldBgCIAEoCUID4EEEIkUKD0xpbmVPQXV0aENvbmZpZxIWCgljbGllbnRfaWQYASABKAlCA+BBBBIaCg1jbGllbnRfc2VjcmV0GAIgASgJQgPgQQQiTgoPV2VDaGF0Qm90Q29uZmlnEg4KBmFwcF9pZBgBIAEoCRIXCgphcHBfc2VjcmV0GAIgASgJQgPgQQQSEgoFdG9rZW4YAyABKAlCA+BBBCIUChJLYWthb1RhbGtCb3RDb25maWciOAoNTGFya0JvdENvbmZpZxIOCgZhcHBfaWQYASABKAkSFwoKYXBwX3NlY3JldBgCIAEoCUID4EEEIjcKE0dvb2dsZUNoYXRCb3RDb25maWcSIAoTc2VydmljZV9hY2NvdW50X2tleRgBIAEoCUID4EEEImAKEVpvb21DaGF0UzJTQ29uZmlnEhYKCWNsaWVudF9pZBgBIAEoCUID4EEEEhoKDWNsaWVudF9zZWNyZXQYAiABKAlCA+BBBBIXCgphY2NvdW50X2lkGAMgASgJQgPgQQQiKAoOV2ViZXhCb3RDb25maWcSFgoJYm90X3Rva2VuGAEgASgJQgPgQQQiOgoTTWF0dGVybW9zdEJvdENvbmZpZxILCgN1cmwYASABKAkSFgoJYm90X3Rva2VuGAIgASgJQgPgQQQiDwoNWmVuZGVza0NvbmZpZyJDCg1IdWJzcG90Q29uZmlnEhYKCWNsaWVudF9pZBgBIAEoCUID4EEEEhoKDWNsaWVudF9zZWNyZXQYAiABKAlCA+BBBCIQCg5JbnRlcmNvbUNvbmZpZyI5Cg9GcmVzaGNoYXRDb25maWcSDgoGYXBwX2lkGAEgASgJEhYKCWFwaV90b2tlbhgCIAEoCUID4EEEIhAKDkxpdmVDaGF0Q29uZmlnIg0KC0luQXBwQ29uZmlnIicKClhCb3RDb25maWcSGQoMYmVhcmVyX3Rva2VuGAEgASgJQgPgQQQiFwoVTGlua2VkSW5Db21wYW55Q29uZmlnInMKD1JlZGRpdEJvdENvbmZpZxIWCgljbGllbnRfaWQYASABKAlCA+BBBBIaCg1jbGllbnRfc2VjcmV0GAIgASgJQgPgQQQSFQoIdXNlcm5hbWUYAyABKAlCA+BBBBIVCghwYXNzd29yZBgEIAEoCUID4EEEIkYKD1Rpa1Rva0JvdENvbmZpZxIXCgpjbGllbnRfa2V5GAEgASgJQgPgQQQSGgoNY2xpZW50X3NlY3JldBgCIAEoCUID4EEEIl0KD1R3aXRjaEJvdENvbmZpZxIWCgljbGllbnRfaWQYASABKAlCA+BBBBIaCg1jbGllbnRfc2VjcmV0GAIgASgJQgPgQQQSFgoOc2VuZGVyX3VzZXJfaWQYAyABKAkiPQoQQmx1ZXNreUJvdENvbmZpZxIOCgZoYW5kbGUYASABKAkSGQoMYXBwX3Bhc3N3b3JkGAIgASgJQgPgQQQiQwoUQWN0aXZpdHlQdWJCb3RDb25maWcSEQoJYWN0b3JfdXJsGAEgASgJEhgKC3ByaXZhdGVfa2V5GAIgASgJQgPgQQQiOgoTQXBwbGVNZXNzYWdlc0NvbmZpZxITCgtidXNpbmVzc19pZBgBIAEoCRIOCgZtc3BfaWQYAiABKAkiPAoRV2hhdHNBcHBCb3RDb25maWcSDgoGYXBwX2lkGAEgASgJEhcKCmFwcF9zZWNyZXQYAiABKAlCA+BBBCJxChJUZWxlZ3JhbVVzZXJDb25maWcSEgoFcGhvbmUYASABKAlCA+BBBBITCgZhcGlfaWQYAiABKAlCA+BBBBIVCghhcGlfaGFzaBgDIAEoCUID4EEEEhsKDnNlc3Npb25fc3RyaW5nGAQgASgJQgPgQQQiDQoLWFVzZXJDb25maWciFAoSTGlua2VkSW5Vc2VyQ29uZmlnIhIKEFJlZGRpdFVzZXJDb25maWciPgoRQmx1ZXNreVVzZXJDb25maWcSDgoGaGFuZGxlGAEgASgJEhkKDGFwcF9wYXNzd29yZBgCIAEoCUID4EEEIhIKEFRpa1Rva1VzZXJDb25maWciEgoQVHdpdGNoVXNlckNvbmZpZyIWChRHb29nbGVDaGF0VXNlckNvbmZpZyIUChJab29tQ2hhdFVzZXJDb25maWciEQoPV2ViZXhVc2VyQ29uZmlnIhAKDkxhcmtVc2VyQ29uZmlnIi0KEFNpZ25hbFVzZXJDb25maWcSGQoMcGhvbmVfbnVtYmVyGAEgASgJQgPgQQQiRAoVQWN0aXZpdHlQdWJVc2VyQ29uZmlnEhEKCWFjdG9yX3VybBgBIAEoCRIYCgtwcml2YXRlX2tleRgCIAEoCUID4EEEIkUKEE1hdHJpeFVzZXJDb25maWcSFgoOaG9tZXNlcnZlcl91cmwYASABKAkSGQoMYWNjZXNzX3Rva2VuGAIgASgJQgPgQQQiTgoOWG1wcFVzZXJDb25maWcSDgoGc2VydmVyGAEgASgJEhUKCHVzZXJuYW1lGAIgASgJQgPgQQQSFQoIcGFzc3dvcmQYAyABKAlCA+BBBCJHChRNYXR0ZXJtb3N0VXNlckNvbmZpZxILCgN1cmwYASABKAkSIgoVcGVyc29uYWxfYWNjZXNzX3Rva2VuGAIgASgJQgPgQQQiwhsKCUNvbm5lY3RvchIRCgRuYW1lGAEgASgJQgPgQQgSKwoEa2luZBgCIAEoDjIYLm91dGJveC52MS5Db25uZWN0b3JLaW5kQgPgQQMSLQoFc3RhdGUYAyABKA4yGS5vdXRib3gudjEuQ29ubmVjdG9yU3RhdGVCA+BBAxI1CglyZWFkaW5lc3MYBCABKA4yHS5vdXRib3gudjEuQ29ubmVjdG9yUmVhZGluZXNzQgPgQQMSRgoVcHJvdmlzaW9uZWRfcmVzb3VyY2VzGAUgAygJQifgQQP6QSEKH291dGJveC5jaGF0L1Byb3Zpc2lvbmVkUmVzb3VyY2USGAoLd2ViaG9va191cmwYBiABKAlCA+BBARIRCgR0YWdzGAcgAygJQgPgQQESGgoNZXJyb3JfbWVzc2FnZRgIIAEoCUID4EEDEjQKC2NyZWF0ZV90aW1lGAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEID4EEDEjQKC3VwZGF0ZV90aW1lGAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEID4EEDEhkKDGRpc3BsYXlfbmFtZRgLIAEoCUID4EEDEjUKCm91dGJveF9zbXMYFCABKAsyGi5vdXRib3gudjEuT3V0Ym94U21zQ29uZmlnQgPgQQFIABI1CgpvdXRib3hfcmNzGBUgASgLMhoub3V0Ym94LnYxLk91dGJveFJjc0NvbmZpZ0ID4EEBSAASPwoPb3V0Ym94X3doYXRzYXBwGBYgASgLMh8ub3V0Ym94LnYxLk91dGJveFdoYXRzQXBwQ29uZmlnQgPgQQFIABI5CgxvdXRib3hfZW1haWwYFyABKAsyHC5vdXRib3gudjEuT3V0Ym94RW1haWxDb25maWdCA+BBAUgAEjkKDHRlbGVncmFtX2JvdBgeIAEoCzIcLm91dGJveC52MS5UZWxlZ3JhbUJvdENvbmZpZ0ID4EEBSAASNwoLZGlzY29yZF9ib3QYHyABKAsyGy5vdXRib3gudjEuRGlzY29yZEJvdENvbmZpZ0ID4EEBSAASMwoJc2xhY2tfYm90GCAgASgLMhkub3V0Ym94LnYxLlNsYWNrQm90Q29uZmlnQgPgQQFIABI3CgtzbGFja19vYXV0aBghIAEoCzIbLm91dGJveC52MS5TbGFja09BdXRoQ29uZmlnQgPgQQFIABIzCgl0ZWFtc19ib3QYIiABKAsyGS5vdXRib3gudjEuVGVhbXNCb3RDb25maWdCA+BBAUgAEjsKDW1lc3Nlbmdlcl9ib3QYIyABKAsyHS5vdXRib3gudjEuTWVzc2VuZ2VyQm90Q29uZmlnQgPgQQFIABI7Cg1pbnN0YWdyYW1fYm90GCQgASgLMh0ub3V0Ym94LnYxLkluc3RhZ3JhbUJvdENvbmZpZ0ID4EEBSAASMwoJdmliZXJfYm90GCUgASgLMhkub3V0Ym94LnYxLlZpYmVyQm90Q29uZmlnQgPgQQFIABIxCghsaW5lX2JvdBgmIAEoCzIYLm91dGJveC52MS5MaW5lQm90Q29uZmlnQgPgQQFIABI1CgpsaW5lX29hdXRoGCcgASgLMhoub3V0Ym94LnYxLkxpbmVPQXV0aENvbmZpZ0ID4EEBSAASNQoKd2VjaGF0X2JvdBgoIAEoCzIaLm91dGJveC52MS5XZUNoYXRCb3RDb25maWdCA+BBAUgAEjwKDmtha2FvX3RhbGtfYm90GCkgASgLMh0ub3V0Ym94LnYxLktha2FvVGFsa0JvdENvbmZpZ0ID4EEBSAASMQoIbGFya19ib3QYKiABKAsyGC5vdXRib3gudjEuTGFya0JvdENvbmZpZ0ID4EEBSAASPgoPZ29vZ2xlX2NoYXRfYm90GCsgASgLMh4ub3V0Ym94LnYxLkdvb2dsZUNoYXRCb3RDb25maWdCA+BBAUgAEjoKDXpvb21fY2hhdF9zMnMYLCABKAsyHC5vdXRib3gudjEuWm9vbUNoYXRTMlNDb25maWdCA+BBAUgAEjMKCXdlYmV4X2JvdBgtIAEoCzIZLm91dGJveC52MS5XZWJleEJvdENvbmZpZ0ID4EEBSAASPQoObWF0dGVybW9zdF9ib3QYLiABKAsyHi5vdXRib3gudjEuTWF0dGVybW9zdEJvdENvbmZpZ0ID4EEBSAASMAoHemVuZGVzaxgvIAEoCzIYLm91dGJveC52MS5aZW5kZXNrQ29uZmlnQgPgQQFIABIwCgdodWJzcG90GDAgASgLMhgub3V0Ym94LnYxLkh1YnNwb3RDb25maWdCA+BBAUgAEjIKCGludGVyY29tGDEgASgLMhkub3V0Ym94LnYxLkludGVyY29tQ29uZmlnQgPgQQFIABI0CglmcmVzaGNoYXQYMiABKAsyGi5vdXRib3gudjEuRnJlc2hjaGF0Q29uZmlnQgPgQQFIABIzCglsaXZlX2NoYXQYMyABKAsyGS5vdXRib3gudjEuTGl2ZUNoYXRDb25maWdCA+BBAUgAEi0KBmluX2FwcBg0IAEoCzIWLm91dGJveC52MS5JbkFwcENvbmZpZ0ID4EEBSAASKwoFeF9ib3QYNSABKAsyFS5vdXRib3gudjEuWEJvdENvbmZpZ0ID4EEBSAASQQoQbGlua2VkaW5fY29tcGFueRg2IAEoCzIgLm91dGJveC52MS5MaW5rZWRJbkNvbXBhbnlDb25maWdCA+BBAUgAEjUKCnJlZGRpdF9ib3QYNyABKAsyGi5vdXRib3gudjEuUmVkZGl0Qm90Q29uZmlnQgPgQQFIABI1Cgp0aWt0b2tfYm90GDggASgLMhoub3V0Ym94LnYxLlRpa1Rva0JvdENvbmZpZ0ID4EEBSAASNQoKdHdpdGNoX2JvdBg5IAEoCzIaLm91dGJveC52MS5Ud2l0Y2hCb3RDb25maWdCA+BBAUgAEjcKC2JsdWVza3lfYm90GDogASgLMhsub3V0Ym94LnYxLkJsdWVza3lCb3RDb25maWdCA+BBAUgAEkAKEGFjdGl2aXR5X3B1Yl9ib3QYOyABKAsyHy5vdXRib3gudjEuQWN0aXZpdHlQdWJCb3RDb25maWdCA+BBAUgAEj0KDmFwcGxlX21lc3NhZ2VzGDwgASgLMh4ub3V0Ym94LnYxLkFwcGxlTWVzc2FnZXNDb25maWdCA+BBAUgAEjkKDHdoYXRzYXBwX2JvdBg9IAEoCzIcLm91dGJveC52MS5XaGF0c0FwcEJvdENvbmZpZ0ID4EEBSAASOwoNdGVsZWdyYW1fdXNlchhQIAEoCzIdLm91dGJveC52MS5UZWxlZ3JhbVVzZXJDb25maWdCA+BBAUgAEi0KBnhfdXNlchhRIAEoCzIWLm91dGJveC52MS5YVXNlckNvbmZpZ0ID4EEBSAASOwoNbGlua2VkaW5fdXNlchhSIAEoCzIdLm91dGJveC52MS5MaW5rZWRJblVzZXJDb25maWdCA+BBAUgAEjcKC3JlZGRpdF91c2VyGFMgASgLMhsub3V0Ym94LnYxLlJlZGRpdFVzZXJDb25maWdCA+BBAUgAEjkKDGJsdWVza3lfdXNlchhUIAEoCzIcLm91dGJveC52MS5CbHVlc2t5VXNlckNvbmZpZ0ID4EEBSAASNwoLdGlrdG9rX3VzZXIYVSABKAsyGy5vdXRib3gudjEuVGlrVG9rVXNlckNvbmZpZ0ID4EEBSAASNwoLdHdpdGNoX3VzZXIYViABKAsyGy5vdXRib3gudjEuVHdpdGNoVXNlckNvbmZpZ0ID4EEBSAASQAoQZ29vZ2xlX2NoYXRfdXNlchhXIAEoCzIfLm91dGJveC52MS5Hb29nbGVDaGF0VXNlckNvbmZpZ0ID4EEBSAASPAoOem9vbV9jaGF0X3VzZXIYWCABKAsyHS5vdXRib3gudjEuWm9vbUNoYXRVc2VyQ29uZmlnQgPgQQFIABI1Cgp3ZWJleF91c2VyGFkgASgLMhoub3V0Ym94LnYxLldlYmV4VXNlckNvbmZpZ0ID4EEBSAASMwoJbGFya191c2VyGFogASgLMhkub3V0Ym94LnYxLkxhcmtVc2VyQ29uZmlnQgPgQQFIABI3CgtzaWduYWxfdXNlchhbIAEoCzIbLm91dGJveC52MS5TaWduYWxVc2VyQ29uZmlnQgPgQQFIABJCChFhY3Rpdml0eV9wdWJfdXNlchhcIAEoCzIgLm91dGJveC52MS5BY3Rpdml0eVB1YlVzZXJDb25maWdCA+BBAUgAEjcKC21hdHJpeF91c2VyGF0gASgLMhsub3V0Ym94LnYxLk1hdHJpeFVzZXJDb25maWdCA+BBAUgAEjMKCXhtcHBfdXNlchheIAEoCzIZLm91dGJveC52MS5YbXBwVXNlckNvbmZpZ0ID4EEBSAASPwoPbWF0dGVybW9zdF91c2VyGF8gASgLMh8ub3V0Ym94LnYxLk1hdHRlcm1vc3RVc2VyQ29uZmlnQgPgQQFIADpJ6kFGChVvdXRib3guY2hhdC9Db25uZWN0b3ISFmNvbm5lY3RvcnMve2Nvbm5lY3Rvcn0qCmNvbm5lY3RvcnMyCWNvbm5lY3RvckIXCg5jaGFubmVsX2NvbmZpZxIFukgCCAEimwEKFkNyZWF0ZUNvbm5lY3RvclJlcXVlc3QSMgoJY29ubmVjdG9yGAEgASgLMhQub3V0Ym94LnYxLkNvbm5lY3RvckIJ4EECukgDyAEBEioKCnJlcXVlc3RfaWQYAiABKAlCFuBBAbpICNgBAXIDsAEB4ozP1wgCCAESIQoUY29uc2VudF9hY2tub3dsZWRnZWQYAyABKAhCA+BBASJiChdDcmVhdGVDb25uZWN0b3JSZXNwb25zZRInCgljb25uZWN0b3IYASABKAsyFC5vdXRib3gudjEuQ29ubmVjdG9yEh4KEWF1dGhvcml6YXRpb25fdXJsGAIgASgJQgPgQQMiiwIKHUNyZWF0ZU1hbmFnZWRDb25uZWN0b3JSZXF1ZXN0EhQKB2NoYW5uZWwYASABKAlCA+BBAhJLCgdmaWx0ZXJzGAIgAygLMjUub3V0Ym94LnYxLkNyZWF0ZU1hbmFnZWRDb25uZWN0b3JSZXF1ZXN0LkZpbHRlcnNFbnRyeUID4EEBEhgKC3dlYmhvb2tfdXJsGAMgASgJQgPgQQESEQoEdGFncxgEIAMoCUID4EEBEioKCnJlcXVlc3RfaWQYBSABKAlCFuBBAbpICNgBAXIDsAEB4ozP1wgCCAEaLgoMRmlsdGVyc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEigQEKGVByb3Zpc2lvblJlc291cmNlTWV0YWRhdGESMgoFc3RhdGUYASABKA4yIy5vdXRib3gudjEuUHJvdmlzaW9uZWRSZXNvdXJjZVN0YXRlEhYKDnN0YXR1c19tZXNzYWdlGAIgASgJEhgKEHByb2dyZXNzX3BlcmNlbnQYAyABKAUihQIKHkNyZWF0ZU1hbmFnZWRDb25uZWN0b3JNZXRhZGF0YRJECgxjdXJyZW50X3N0ZXAYASABKA4yLi5vdXRib3gudjEuQ3JlYXRlTWFuYWdlZENvbm5lY3Rvck1ldGFkYXRhLlN0ZXASQAoScHJvdmlzaW9uX21ldGFkYXRhGAIgASgLMiQub3V0Ym94LnYxLlByb3Zpc2lvblJlc291cmNlTWV0YWRhdGEiWwoEU3RlcBIUChBTVEVQX1VOU1BFQ0lGSUVEEAASEgoOU1RFUF9TRUFSQ0hJTkcQARIVChFTVEVQX1BST1ZJU0lPTklORxACEhIKDlNURVBfQVRUQUNISU5HEAMiSQoTR2V0Q29ubmVjdG9yUmVxdWVzdBIyCgRuYW1lGAEgASgJQiTgQQL6QRcKFW91dGJveC5jaGF0L0Nvbm5lY3RvcrpIBHICEAEiPwoUR2V0Q29ubmVjdG9yUmVzcG9uc2USJwoJY29ubmVjdG9yGAEgASgLMhQub3V0Ym94LnYxLkNvbm5lY3RvciJ+ChVMaXN0Q29ubmVjdG9yc1JlcXVlc3QSIAoJcGFnZV9zaXplGAEgASgFQg3gQQG6SAcaBRjoBygAEhcKCnBhZ2VfdG9rZW4YAiABKAlCA+BBARITCgZmaWx0ZXIYAyABKAlCA+BBARIVCghvcmRlcl9ieRgEIAEoCUID4EEBInkKFkxpc3RDb25uZWN0b3JzUmVzcG9uc2USKAoKY29ubmVjdG9ycxgBIAMoCzIULm91dGJveC52MS5Db25uZWN0b3ISHAoPbmV4dF9wYWdlX3Rva2VuGAIgASgJQgPgQQMSFwoKdG90YWxfc2l6ZRgDIAEoBUID4EEDIoIBChZVcGRhdGVDb25uZWN0b3JSZXF1ZXN0EjIKCWNvbm5lY3RvchgBIAEoCzIULm91dGJveC52MS5Db25uZWN0b3JCCeBBArpIA8gBARI0Cgt1cGRhdGVfbWFzaxgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE1hc2tCA+BBASJCChdVcGRhdGVDb25uZWN0b3JSZXNwb25zZRInCgljb25uZWN0b3IYASABKAsyFC5vdXRib3gudjEuQ29ubmVjdG9yIkwKFkRlbGV0ZUNvbm5lY3RvclJlcXVlc3QSMgoEbmFtZRgBIAEoCUIk4EEC+kEXChVvdXRib3guY2hhdC9Db25uZWN0b3K6SARyAhABIhkKF0RlbGV0ZUNvbm5lY3RvclJlc3BvbnNlIn0KFlZlcmlmeUNvbm5lY3RvclJlcXVlc3QSMgoEbmFtZRgBIAEoCUIk4EEC+kEXChVvdXRib3guY2hhdC9Db25uZWN0b3K6SARyAhABEhgKBGNvZGUYAiABKAlCCuBBArpIBHICEAESFQoIcGFzc3dvcmQYAyABKAlCA+BBASJCChdWZXJpZnlDb25uZWN0b3JSZXNwb25zZRInCgljb25uZWN0b3IYASABKAsyFC5vdXRib3gudjEuQ29ubmVjdG9yIlYKIERldGFjaFByb3Zpc2lvbmVkUmVzb3VyY2VSZXF1ZXN0EjIKBG5hbWUYASABKAlCJOBBAvpBFwoVb3V0Ym94LmNoYXQvQ29ubmVjdG9yukgEcgIQASJMCiFEZXRhY2hQcm92aXNpb25lZFJlc291cmNlUmVzcG9uc2USJwoJY29ubmVjdG9yGAEgASgLMhQub3V0Ym94LnYxLkNvbm5lY3RvciJRChtSZWF1dGhvcml6ZUNvbm5lY3RvclJlcXVlc3QSMgoEbmFtZRgBIAEoCUIk4EEC+kEXChVvdXRib3guY2hhdC9Db25uZWN0b3K6SARyAhABImcKHFJlYXV0aG9yaXplQ29ubmVjdG9yUmVzcG9uc2USJwoJY29ubmVjdG9yGAEgASgLMhQub3V0Ym94LnYxLkNvbm5lY3RvchIeChFhdXRob3JpemF0aW9uX3VybBgCIAEoCUID4EEDIk4KGEFjdGl2YXRlQ29ubmVjdG9yUmVxdWVzdBIyCgRuYW1lGAEgASgJQiTgQQL6QRcKFW91dGJveC5jaGF0L0Nvbm5lY3RvcrpIBHICEAEiRAoZQWN0aXZhdGVDb25uZWN0b3JSZXNwb25zZRInCgljb25uZWN0b3IYASABKAsyFC5vdXRib3gudjEuQ29ubmVjdG9yIlAKGkRlYWN0aXZhdGVDb25uZWN0b3JSZXF1ZXN0EjIKBG5hbWUYASABKAlCJOBBAvpBFwoVb3V0Ym94LmNoYXQvQ29ubmVjdG9yukgEcgIQASJGChtEZWFjdGl2YXRlQ29ubmVjdG9yUmVzcG9uc2USJwoJY29ubmVjdG9yGAEgASgLMhQub3V0Ym94LnYxLkNvbm5lY3Rvciq7AwoYUHJvdmlzaW9uZWRSZXNvdXJjZVN0YXRlEioKJlBST1ZJU0lPTkVEX1JFU09VUkNFX1NUQVRFX1VOU1BFQ0lGSUVEEAASJgoiUFJPVklTSU9ORURfUkVTT1VSQ0VfU1RBVEVfUEVORElORxABEisKJ1BST1ZJU0lPTkVEX1JFU09VUkNFX1NUQVRFX1BST1ZJU0lPTklORxACEiUKIVBST1ZJU0lPTkVEX1JFU09VUkNFX1NUQVRFX0FDVElWRRADEigKJFBST1ZJU0lPTkVEX1JFU09VUkNFX1NUQVRFX1NVU1BFTkRFRBAEEicKI1BST1ZJU0lPTkVEX1JFU09VUkNFX1NUQVRFX1JFTEVBU0VEEAUSJQohUFJPVklTSU9ORURfUkVTT1VSQ0VfU1RBVEVfRkFJTEVEEAYSKQolUFJPVklTSU9ORURfUkVTT1VSQ0VfU1RBVEVfQ0FOQ0VMTElORxAHEiYKIlBST1ZJU0lPTkVEX1JFU09VUkNFX1NUQVRFX1BPUlRJTkcQCBIqCiZQUk9WSVNJT05FRF9SRVNPVVJDRV9TVEFURV9QT1JUX0ZBSUxFRBAJKnwKDUNvbm5lY3RvcktpbmQSHgoaQ09OTkVDVE9SX0tJTkRfVU5TUEVDSUZJRUQQABIaChZDT05ORUNUT1JfS0lORF9NQU5BR0VEEAESFwoTQ09OTkVDVE9SX0tJTkRfVVNFUhACEhYKEkNPTk5FQ1RPUl9LSU5EX0JPVBADKqcBCg5Db25uZWN0b3JTdGF0ZRIfChtDT05ORUNUT1JfU1RBVEVfVU5TUEVDSUZJRUQQABIaChZDT05ORUNUT1JfU1RBVEVfQUNUSVZFEAESHAoYQ09OTkVDVE9SX1NUQVRFX0lOQUNUSVZFEAISHwobQ09OTkVDVE9SX1NUQVRFX0FVVEhPUklaSU5HEAMSGQoVQ09OTkVDVE9SX1NUQVRFX0VSUk9SEAQq3QEKEkNvbm5lY3RvclJlYWRpbmVzcxIjCh9DT05ORUNUT1JfUkVBRElORVNTX1VOU1BFQ0lGSUVEEAASHQoZQ09OTkVDVE9SX1JFQURJTkVTU19SRUFEWRABEioKJkNPTk5FQ1RPUl9SRUFESU5FU1NfUEVORElOR19DT01QTElBTkNFEAISKwonQ09OTkVDVE9SX1JFQURJTkVTU19SRVNPVVJDRV9OT1RfQUNUSVZFEAMSKgomQ09OTkVDVE9SX1JFQURJTkVTU19SRVNPVVJDRV9TVVNQRU5ERUQQBDLOCQoQQ29ubmVjdG9yU2VydmljZRJmCg9DcmVhdGVDb25uZWN0b3ISIS5vdXRib3gudjEuQ3JlYXRlQ29ubmVjdG9yUmVxdWVzdBoiLm91dGJveC52MS5DcmVhdGVDb25uZWN0b3JSZXNwb25zZSIM2kEJY29ubmVjdG9yEpEBChZDcmVhdGVNYW5hZ2VkQ29ubmVjdG9yEigub3V0Ym94LnYxLkNyZWF0ZU1hbmFnZWRDb25uZWN0b3JSZXF1ZXN0Gh0uZ29vZ2xlLmxvbmdydW5uaW5nLk9wZXJhdGlvbiIuykErCglDb25uZWN0b3ISHkNyZWF0ZU1hbmFnZWRDb25uZWN0b3JNZXRhZGF0YRJYCgxHZXRDb25uZWN0b3ISHi5vdXRib3gudjEuR2V0Q29ubmVjdG9yUmVxdWVzdBofLm91dGJveC52MS5HZXRDb25uZWN0b3JSZXNwb25zZSIH2kEEbmFtZRJaCg5MaXN0Q29ubmVjdG9ycxIgLm91dGJveC52MS5MaXN0Q29ubmVjdG9yc1JlcXVlc3QaIS5vdXRib3gudjEuTGlzdENvbm5lY3RvcnNSZXNwb25zZSID2kEAEnIKD1VwZGF0ZUNvbm5lY3RvchIhLm91dGJveC52MS5VcGRhdGVDb25uZWN0b3JSZXF1ZXN0GiIub3V0Ym94LnYxLlVwZGF0ZUNvbm5lY3RvclJlc3BvbnNlIhjaQRVjb25uZWN0b3IsdXBkYXRlX21hc2sSYQoPRGVsZXRlQ29ubmVjdG9yEiEub3V0Ym94LnYxLkRlbGV0ZUNvbm5lY3RvclJlcXVlc3QaIi5vdXRib3gudjEuRGVsZXRlQ29ubmVjdG9yUmVzcG9uc2UiB9pBBG5hbWUSfwoZRGV0YWNoUHJvdmlzaW9uZWRSZXNvdXJjZRIrLm91dGJveC52MS5EZXRhY2hQcm92aXNpb25lZFJlc291cmNlUmVxdWVzdBosLm91dGJveC52MS5EZXRhY2hQcm92aXNpb25lZFJlc291cmNlUmVzcG9uc2UiB9pBBG5hbWUScAoUUmVhdXRob3JpemVDb25uZWN0b3ISJi5vdXRib3gudjEuUmVhdXRob3JpemVDb25uZWN0b3JSZXF1ZXN0Gicub3V0Ym94LnYxLlJlYXV0aG9yaXplQ29ubmVjdG9yUmVzcG9uc2UiB9pBBG5hbWUSZwoRQWN0aXZhdGVDb25uZWN0b3ISIy5vdXRib3gudjEuQWN0aXZhdGVDb25uZWN0b3JSZXF1ZXN0GiQub3V0Ym94LnYxLkFjdGl2YXRlQ29ubmVjdG9yUmVzcG9uc2UiB9pBBG5hbWUSbQoTRGVhY3RpdmF0ZUNvbm5lY3RvchIlLm91dGJveC52MS5EZWFjdGl2YXRlQ29ubmVjdG9yUmVxdWVzdBomLm91dGJveC52MS5EZWFjdGl2YXRlQ29ubmVjdG9yUmVzcG9uc2UiB9pBBG5hbWUSZgoPVmVyaWZ5Q29ubmVjdG9yEiEub3V0Ym94LnYxLlZlcmlmeUNvbm5lY3RvclJlcXVlc3QaIi5vdXRib3gudjEuVmVyaWZ5Q29ubmVjdG9yUmVzcG9uc2UiDNpBCW5hbWUsY29kZUJQWklnaXRodWIuY29tL2dldG91dGJveC9vdXRib3gtaW50ZXJuYWwvZ28vb3V0Ym94LWFwaS9nZW4vb3V0Ym94L3YxO291dGJveHYxkgMCCAJiCGVkaXRpb25zcOgH", [file_buf_validate_validate, file_google_api_client, file_google_api_field_behavior, file_google_api_field_info, file_google_api_resource, file_google_longrunning_operations, file_google_protobuf_field_mask, file_google_protobuf_timestamp]);
+
+/**
+ * Describes the message outbox.v1.OutboxSmsConfig.
+ * Use `create(OutboxSmsConfigSchema)` to create a new message.
+ */
+export const OutboxSmsConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 0);
+
+/**
+ * Describes the message outbox.v1.OutboxRcsConfig.
+ * Use `create(OutboxRcsConfigSchema)` to create a new message.
+ */
+export const OutboxRcsConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 1);
+
+/**
+ * Describes the message outbox.v1.OutboxWhatsAppConfig.
+ * Use `create(OutboxWhatsAppConfigSchema)` to create a new message.
+ */
+export const OutboxWhatsAppConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 2);
+
+/**
+ * Describes the message outbox.v1.OutboxEmailConfig.
+ * Use `create(OutboxEmailConfigSchema)` to create a new message.
+ */
+export const OutboxEmailConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 3);
+
+/**
+ * Describes the message outbox.v1.DnsRecord.
+ * Use `create(DnsRecordSchema)` to create a new message.
+ */
+export const DnsRecordSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 4);
+
+/**
+ * Describes the message outbox.v1.TelegramBotConfig.
+ * Use `create(TelegramBotConfigSchema)` to create a new message.
+ */
+export const TelegramBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 5);
+
+/**
+ * Describes the message outbox.v1.DiscordBotConfig.
+ * Use `create(DiscordBotConfigSchema)` to create a new message.
+ */
+export const DiscordBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 6);
+
+/**
+ * Describes the message outbox.v1.SlackBotConfig.
+ * Use `create(SlackBotConfigSchema)` to create a new message.
+ */
+export const SlackBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 7);
+
+/**
+ * Describes the message outbox.v1.SlackOAuthConfig.
+ * Use `create(SlackOAuthConfigSchema)` to create a new message.
+ */
+export const SlackOAuthConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 8);
+
+/**
+ * Describes the message outbox.v1.TeamsBotConfig.
+ * Use `create(TeamsBotConfigSchema)` to create a new message.
+ */
+export const TeamsBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 9);
+
+/**
+ * Describes the message outbox.v1.MessengerBotConfig.
+ * Use `create(MessengerBotConfigSchema)` to create a new message.
+ */
+export const MessengerBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 10);
+
+/**
+ * Describes the message outbox.v1.InstagramBotConfig.
+ * Use `create(InstagramBotConfigSchema)` to create a new message.
+ */
+export const InstagramBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 11);
+
+/**
+ * Describes the message outbox.v1.ViberBotConfig.
+ * Use `create(ViberBotConfigSchema)` to create a new message.
+ */
+export const ViberBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 12);
+
+/**
+ * Describes the message outbox.v1.LineBotConfig.
+ * Use `create(LineBotConfigSchema)` to create a new message.
+ */
+export const LineBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 13);
+
+/**
+ * Describes the message outbox.v1.LineOAuthConfig.
+ * Use `create(LineOAuthConfigSchema)` to create a new message.
+ */
+export const LineOAuthConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 14);
+
+/**
+ * Describes the message outbox.v1.WeChatBotConfig.
+ * Use `create(WeChatBotConfigSchema)` to create a new message.
+ */
+export const WeChatBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 15);
+
+/**
+ * Describes the message outbox.v1.KakaoTalkBotConfig.
+ * Use `create(KakaoTalkBotConfigSchema)` to create a new message.
+ */
+export const KakaoTalkBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 16);
+
+/**
+ * Describes the message outbox.v1.LarkBotConfig.
+ * Use `create(LarkBotConfigSchema)` to create a new message.
+ */
+export const LarkBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 17);
+
+/**
+ * Describes the message outbox.v1.GoogleChatBotConfig.
+ * Use `create(GoogleChatBotConfigSchema)` to create a new message.
+ */
+export const GoogleChatBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 18);
+
+/**
+ * Describes the message outbox.v1.ZoomChatS2SConfig.
+ * Use `create(ZoomChatS2SConfigSchema)` to create a new message.
+ */
+export const ZoomChatS2SConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 19);
+
+/**
+ * Describes the message outbox.v1.WebexBotConfig.
+ * Use `create(WebexBotConfigSchema)` to create a new message.
+ */
+export const WebexBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 20);
+
+/**
+ * Describes the message outbox.v1.MattermostBotConfig.
+ * Use `create(MattermostBotConfigSchema)` to create a new message.
+ */
+export const MattermostBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 21);
+
+/**
+ * Describes the message outbox.v1.ZendeskConfig.
+ * Use `create(ZendeskConfigSchema)` to create a new message.
+ */
+export const ZendeskConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 22);
+
+/**
+ * Describes the message outbox.v1.HubspotConfig.
+ * Use `create(HubspotConfigSchema)` to create a new message.
+ */
+export const HubspotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 23);
+
+/**
+ * Describes the message outbox.v1.IntercomConfig.
+ * Use `create(IntercomConfigSchema)` to create a new message.
+ */
+export const IntercomConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 24);
+
+/**
+ * Describes the message outbox.v1.FreshchatConfig.
+ * Use `create(FreshchatConfigSchema)` to create a new message.
+ */
+export const FreshchatConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 25);
+
+/**
+ * Describes the message outbox.v1.LiveChatConfig.
+ * Use `create(LiveChatConfigSchema)` to create a new message.
+ */
+export const LiveChatConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 26);
+
+/**
+ * Describes the message outbox.v1.InAppConfig.
+ * Use `create(InAppConfigSchema)` to create a new message.
+ */
+export const InAppConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 27);
+
+/**
+ * Describes the message outbox.v1.XBotConfig.
+ * Use `create(XBotConfigSchema)` to create a new message.
+ */
+export const XBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 28);
+
+/**
+ * Describes the message outbox.v1.LinkedInCompanyConfig.
+ * Use `create(LinkedInCompanyConfigSchema)` to create a new message.
+ */
+export const LinkedInCompanyConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 29);
+
+/**
+ * Describes the message outbox.v1.RedditBotConfig.
+ * Use `create(RedditBotConfigSchema)` to create a new message.
+ */
+export const RedditBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 30);
+
+/**
+ * Describes the message outbox.v1.TikTokBotConfig.
+ * Use `create(TikTokBotConfigSchema)` to create a new message.
+ */
+export const TikTokBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 31);
+
+/**
+ * Describes the message outbox.v1.TwitchBotConfig.
+ * Use `create(TwitchBotConfigSchema)` to create a new message.
+ */
+export const TwitchBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 32);
+
+/**
+ * Describes the message outbox.v1.BlueskyBotConfig.
+ * Use `create(BlueskyBotConfigSchema)` to create a new message.
+ */
+export const BlueskyBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 33);
+
+/**
+ * Describes the message outbox.v1.ActivityPubBotConfig.
+ * Use `create(ActivityPubBotConfigSchema)` to create a new message.
+ */
+export const ActivityPubBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 34);
+
+/**
+ * Describes the message outbox.v1.AppleMessagesConfig.
+ * Use `create(AppleMessagesConfigSchema)` to create a new message.
+ */
+export const AppleMessagesConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 35);
+
+/**
+ * Describes the message outbox.v1.WhatsAppBotConfig.
+ * Use `create(WhatsAppBotConfigSchema)` to create a new message.
+ */
+export const WhatsAppBotConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 36);
+
+/**
+ * Describes the message outbox.v1.TelegramUserConfig.
+ * Use `create(TelegramUserConfigSchema)` to create a new message.
+ */
+export const TelegramUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 37);
+
+/**
+ * Describes the message outbox.v1.XUserConfig.
+ * Use `create(XUserConfigSchema)` to create a new message.
+ */
+export const XUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 38);
+
+/**
+ * Describes the message outbox.v1.LinkedInUserConfig.
+ * Use `create(LinkedInUserConfigSchema)` to create a new message.
+ */
+export const LinkedInUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 39);
+
+/**
+ * Describes the message outbox.v1.RedditUserConfig.
+ * Use `create(RedditUserConfigSchema)` to create a new message.
+ */
+export const RedditUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 40);
+
+/**
+ * Describes the message outbox.v1.BlueskyUserConfig.
+ * Use `create(BlueskyUserConfigSchema)` to create a new message.
+ */
+export const BlueskyUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 41);
+
+/**
+ * Describes the message outbox.v1.TikTokUserConfig.
+ * Use `create(TikTokUserConfigSchema)` to create a new message.
+ */
+export const TikTokUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 42);
+
+/**
+ * Describes the message outbox.v1.TwitchUserConfig.
+ * Use `create(TwitchUserConfigSchema)` to create a new message.
+ */
+export const TwitchUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 43);
+
+/**
+ * Describes the message outbox.v1.GoogleChatUserConfig.
+ * Use `create(GoogleChatUserConfigSchema)` to create a new message.
+ */
+export const GoogleChatUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 44);
+
+/**
+ * Describes the message outbox.v1.ZoomChatUserConfig.
+ * Use `create(ZoomChatUserConfigSchema)` to create a new message.
+ */
+export const ZoomChatUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 45);
+
+/**
+ * Describes the message outbox.v1.WebexUserConfig.
+ * Use `create(WebexUserConfigSchema)` to create a new message.
+ */
+export const WebexUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 46);
+
+/**
+ * Describes the message outbox.v1.LarkUserConfig.
+ * Use `create(LarkUserConfigSchema)` to create a new message.
+ */
+export const LarkUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 47);
+
+/**
+ * Describes the message outbox.v1.SignalUserConfig.
+ * Use `create(SignalUserConfigSchema)` to create a new message.
+ */
+export const SignalUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 48);
+
+/**
+ * Describes the message outbox.v1.ActivityPubUserConfig.
+ * Use `create(ActivityPubUserConfigSchema)` to create a new message.
+ */
+export const ActivityPubUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 49);
+
+/**
+ * Describes the message outbox.v1.MatrixUserConfig.
+ * Use `create(MatrixUserConfigSchema)` to create a new message.
+ */
+export const MatrixUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 50);
+
+/**
+ * Describes the message outbox.v1.XmppUserConfig.
+ * Use `create(XmppUserConfigSchema)` to create a new message.
+ */
+export const XmppUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 51);
+
+/**
+ * Describes the message outbox.v1.MattermostUserConfig.
+ * Use `create(MattermostUserConfigSchema)` to create a new message.
+ */
+export const MattermostUserConfigSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 52);
 
 /**
  * Describes the message outbox.v1.Connector.
  * Use `create(ConnectorSchema)` to create a new message.
  */
 export const ConnectorSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 0);
-
-/**
- * Describes the enum outbox.v1.Connector.State.
- */
-export const Connector_StateSchema = /*@__PURE__*/
-  enumDesc(file_outbox_v1_connector, 0, 0);
-
-/**
- * @generated from enum outbox.v1.Connector.State
- */
-export const Connector_State = /*@__PURE__*/
-  tsEnum(Connector_StateSchema);
+  messageDesc(file_outbox_v1_connector, 53);
 
 /**
  * Describes the message outbox.v1.CreateConnectorRequest.
  * Use `create(CreateConnectorRequestSchema)` to create a new message.
  */
 export const CreateConnectorRequestSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 1);
+  messageDesc(file_outbox_v1_connector, 54);
 
 /**
  * Describes the message outbox.v1.CreateConnectorResponse.
  * Use `create(CreateConnectorResponseSchema)` to create a new message.
  */
 export const CreateConnectorResponseSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 2);
+  messageDesc(file_outbox_v1_connector, 55);
+
+/**
+ * Describes the message outbox.v1.CreateManagedConnectorRequest.
+ * Use `create(CreateManagedConnectorRequestSchema)` to create a new message.
+ */
+export const CreateManagedConnectorRequestSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 56);
+
+/**
+ * Describes the message outbox.v1.ProvisionResourceMetadata.
+ * Use `create(ProvisionResourceMetadataSchema)` to create a new message.
+ */
+export const ProvisionResourceMetadataSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 57);
+
+/**
+ * Describes the message outbox.v1.CreateManagedConnectorMetadata.
+ * Use `create(CreateManagedConnectorMetadataSchema)` to create a new message.
+ */
+export const CreateManagedConnectorMetadataSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 58);
+
+/**
+ * Describes the enum outbox.v1.CreateManagedConnectorMetadata.Step.
+ */
+export const CreateManagedConnectorMetadata_StepSchema = /*@__PURE__*/
+  enumDesc(file_outbox_v1_connector, 58, 0);
+
+/**
+ * @generated from enum outbox.v1.CreateManagedConnectorMetadata.Step
+ */
+export const CreateManagedConnectorMetadata_Step = /*@__PURE__*/
+  tsEnum(CreateManagedConnectorMetadata_StepSchema);
 
 /**
  * Describes the message outbox.v1.GetConnectorRequest.
  * Use `create(GetConnectorRequestSchema)` to create a new message.
  */
 export const GetConnectorRequestSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 3);
+  messageDesc(file_outbox_v1_connector, 59);
 
 /**
  * Describes the message outbox.v1.GetConnectorResponse.
  * Use `create(GetConnectorResponseSchema)` to create a new message.
  */
 export const GetConnectorResponseSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 4);
+  messageDesc(file_outbox_v1_connector, 60);
 
 /**
  * Describes the message outbox.v1.ListConnectorsRequest.
  * Use `create(ListConnectorsRequestSchema)` to create a new message.
  */
 export const ListConnectorsRequestSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 5);
+  messageDesc(file_outbox_v1_connector, 61);
 
 /**
  * Describes the message outbox.v1.ListConnectorsResponse.
  * Use `create(ListConnectorsResponseSchema)` to create a new message.
  */
 export const ListConnectorsResponseSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 6);
+  messageDesc(file_outbox_v1_connector, 62);
 
 /**
  * Describes the message outbox.v1.UpdateConnectorRequest.
  * Use `create(UpdateConnectorRequestSchema)` to create a new message.
  */
 export const UpdateConnectorRequestSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 7);
+  messageDesc(file_outbox_v1_connector, 63);
 
 /**
  * Describes the message outbox.v1.UpdateConnectorResponse.
  * Use `create(UpdateConnectorResponseSchema)` to create a new message.
  */
 export const UpdateConnectorResponseSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 8);
+  messageDesc(file_outbox_v1_connector, 64);
 
 /**
  * Describes the message outbox.v1.DeleteConnectorRequest.
  * Use `create(DeleteConnectorRequestSchema)` to create a new message.
  */
 export const DeleteConnectorRequestSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 9);
+  messageDesc(file_outbox_v1_connector, 65);
 
 /**
  * Describes the message outbox.v1.DeleteConnectorResponse.
  * Use `create(DeleteConnectorResponseSchema)` to create a new message.
  */
 export const DeleteConnectorResponseSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 10);
+  messageDesc(file_outbox_v1_connector, 66);
 
 /**
- * Describes the message outbox.v1.ActivateConnectorRequest.
- * Use `create(ActivateConnectorRequestSchema)` to create a new message.
+ * Describes the message outbox.v1.VerifyConnectorRequest.
+ * Use `create(VerifyConnectorRequestSchema)` to create a new message.
  */
-export const ActivateConnectorRequestSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 11);
+export const VerifyConnectorRequestSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 67);
 
 /**
- * Describes the message outbox.v1.ActivateConnectorResponse.
- * Use `create(ActivateConnectorResponseSchema)` to create a new message.
+ * Describes the message outbox.v1.VerifyConnectorResponse.
+ * Use `create(VerifyConnectorResponseSchema)` to create a new message.
  */
-export const ActivateConnectorResponseSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 12);
+export const VerifyConnectorResponseSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 68);
 
 /**
- * Describes the message outbox.v1.DeactivateConnectorRequest.
- * Use `create(DeactivateConnectorRequestSchema)` to create a new message.
+ * Describes the message outbox.v1.DetachProvisionedResourceRequest.
+ * Use `create(DetachProvisionedResourceRequestSchema)` to create a new message.
  */
-export const DeactivateConnectorRequestSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 13);
+export const DetachProvisionedResourceRequestSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 69);
 
 /**
- * Describes the message outbox.v1.DeactivateConnectorResponse.
- * Use `create(DeactivateConnectorResponseSchema)` to create a new message.
+ * Describes the message outbox.v1.DetachProvisionedResourceResponse.
+ * Use `create(DetachProvisionedResourceResponseSchema)` to create a new message.
  */
-export const DeactivateConnectorResponseSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 14);
+export const DetachProvisionedResourceResponseSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 70);
 
 /**
  * Describes the message outbox.v1.ReauthorizeConnectorRequest.
  * Use `create(ReauthorizeConnectorRequestSchema)` to create a new message.
  */
 export const ReauthorizeConnectorRequestSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 15);
+  messageDesc(file_outbox_v1_connector, 71);
 
 /**
  * Describes the message outbox.v1.ReauthorizeConnectorResponse.
  * Use `create(ReauthorizeConnectorResponseSchema)` to create a new message.
  */
 export const ReauthorizeConnectorResponseSchema = /*@__PURE__*/
-  messageDesc(file_outbox_v1_connector, 16);
+  messageDesc(file_outbox_v1_connector, 72);
+
+/**
+ * Describes the message outbox.v1.ActivateConnectorRequest.
+ * Use `create(ActivateConnectorRequestSchema)` to create a new message.
+ */
+export const ActivateConnectorRequestSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 73);
+
+/**
+ * Describes the message outbox.v1.ActivateConnectorResponse.
+ * Use `create(ActivateConnectorResponseSchema)` to create a new message.
+ */
+export const ActivateConnectorResponseSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 74);
+
+/**
+ * Describes the message outbox.v1.DeactivateConnectorRequest.
+ * Use `create(DeactivateConnectorRequestSchema)` to create a new message.
+ */
+export const DeactivateConnectorRequestSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 75);
+
+/**
+ * Describes the message outbox.v1.DeactivateConnectorResponse.
+ * Use `create(DeactivateConnectorResponseSchema)` to create a new message.
+ */
+export const DeactivateConnectorResponseSchema = /*@__PURE__*/
+  messageDesc(file_outbox_v1_connector, 76);
+
+/**
+ * Describes the enum outbox.v1.ProvisionedResourceState.
+ */
+export const ProvisionedResourceStateSchema = /*@__PURE__*/
+  enumDesc(file_outbox_v1_connector, 0);
+
+/**
+ * State of a provisioned infrastructure resource (phone number, WABA, domain).
+ *
+ * @generated from enum outbox.v1.ProvisionedResourceState
+ */
+export const ProvisionedResourceState = /*@__PURE__*/
+  tsEnum(ProvisionedResourceStateSchema);
+
+/**
+ * Describes the enum outbox.v1.ConnectorKind.
+ */
+export const ConnectorKindSchema = /*@__PURE__*/
+  enumDesc(file_outbox_v1_connector, 1);
+
+/**
+ * @generated from enum outbox.v1.ConnectorKind
+ */
+export const ConnectorKind = /*@__PURE__*/
+  tsEnum(ConnectorKindSchema);
+
+/**
+ * Describes the enum outbox.v1.ConnectorState.
+ */
+export const ConnectorStateSchema = /*@__PURE__*/
+  enumDesc(file_outbox_v1_connector, 2);
+
+/**
+ * @generated from enum outbox.v1.ConnectorState
+ */
+export const ConnectorState = /*@__PURE__*/
+  tsEnum(ConnectorStateSchema);
+
+/**
+ * Describes the enum outbox.v1.ConnectorReadiness.
+ */
+export const ConnectorReadinessSchema = /*@__PURE__*/
+  enumDesc(file_outbox_v1_connector, 3);
+
+/**
+ * @generated from enum outbox.v1.ConnectorReadiness
+ */
+export const ConnectorReadiness = /*@__PURE__*/
+  tsEnum(ConnectorReadinessSchema);
 
 /**
  * @generated from service outbox.v1.ConnectorService

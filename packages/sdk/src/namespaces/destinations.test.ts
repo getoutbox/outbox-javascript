@@ -42,6 +42,13 @@ function makeClient() {
     testDestination: vi
       .fn()
       .mockResolvedValue({ success: true, errorMessage: "" }),
+    listDestinationTestResults: vi.fn().mockResolvedValue({ results: [] }),
+    validateDestinationFilter: vi.fn().mockResolvedValue({
+      valid: true,
+      errorMessage: "",
+      matchedCount: 5,
+      totalCount: 10,
+    }),
     pollEvents: vi
       .fn()
       .mockResolvedValue({ events: [protoDeliveryEvent], cursor: "cur-1" }),
@@ -211,6 +218,88 @@ describe("DestinationsNamespace", () => {
     const result = await ns.test("dest1");
     expect(result.success).toBe(false);
     expect(result.errorMessage).toBe("Connection refused");
+  });
+
+  it("listTestResults returns items with mapped fields", async () => {
+    client.listDestinationTestResults.mockResolvedValue({
+      results: [
+        {
+          success: true,
+          errorMessage: "",
+          httpStatusCode: 200,
+          latencyMs: BigInt(42),
+          testTime: { seconds: BigInt(1000), nanos: 0 },
+        },
+      ],
+    });
+    const result = await ns.listTestResults("dest1");
+    expect(client.listDestinationTestResults).toHaveBeenCalledWith({
+      name: "destinations/dest1",
+      pageSize: undefined,
+    });
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].success).toBe(true);
+    expect(result.items[0].latencyMs).toBe(BigInt(42));
+    expect(result.items[0].httpStatusCode).toBe(200);
+    expect(result.items[0].errorMessage).toBeUndefined();
+    expect(result.items[0].testTime).toEqual(new Date(1_000_000));
+  });
+
+  it("listTestResults passes pageSize option", async () => {
+    await ns.listTestResults("dest1", { pageSize: 20 });
+    expect(client.listDestinationTestResults).toHaveBeenCalledWith({
+      name: "destinations/dest1",
+      pageSize: 20,
+    });
+  });
+
+  it("listTestResults maps testTime to undefined when not set", async () => {
+    client.listDestinationTestResults.mockResolvedValue({
+      results: [
+        {
+          success: false,
+          errorMessage: "timeout",
+          httpStatusCode: 0,
+          latencyMs: BigInt(0),
+          testTime: undefined,
+        },
+      ],
+    });
+    const result = await ns.listTestResults("dest1");
+    expect(result.items[0].testTime).toBeUndefined();
+    expect(result.items[0].errorMessage).toBe("timeout");
+  });
+
+  it("validateFilter returns valid result with counts", async () => {
+    const result = await ns.validateFilter("channel_type == 'sms'");
+    expect(client.validateDestinationFilter).toHaveBeenCalledWith({
+      filter: "channel_type == 'sms'",
+      sampleSize: undefined,
+    });
+    expect(result.valid).toBe(true);
+    expect(result.matchedCount).toBe(5);
+    expect(result.totalCount).toBe(10);
+    expect(result.errorMessage).toBeUndefined();
+  });
+
+  it("validateFilter passes sampleSize option", async () => {
+    await ns.validateFilter("channel_type == 'sms'", { sampleSize: 100 });
+    expect(client.validateDestinationFilter).toHaveBeenCalledWith({
+      filter: "channel_type == 'sms'",
+      sampleSize: 100,
+    });
+  });
+
+  it("validateFilter returns errorMessage when filter is invalid", async () => {
+    client.validateDestinationFilter.mockResolvedValue({
+      valid: false,
+      errorMessage: "unexpected token",
+      matchedCount: 0,
+      totalCount: 0,
+    });
+    const result = await ns.validateFilter("bad filter !!!");
+    expect(result.valid).toBe(false);
+    expect(result.errorMessage).toBe("unexpected token");
   });
 
   it("throws when server returns no destination on get", async () => {

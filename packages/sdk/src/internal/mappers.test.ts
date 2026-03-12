@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   mapAccount,
-  mapChannel,
   mapConnector,
   mapDeliveryEvent,
   mapDestination,
   mapMessage,
   mapMessageDelivery,
   mapReadReceipt,
+  mapTemplate,
   mapTypingIndicator,
 } from "./mappers.js";
 
@@ -26,60 +26,6 @@ const protoAccount = {
   createTime: ts(1000),
   updateTime: ts(2000),
 } as any;
-
-// -------------------------
-// mapChannel
-// -------------------------
-
-describe("mapChannel", () => {
-  it("extracts id and converts createTime", () => {
-    const ch = mapChannel({
-      name: "channels/whatsapp",
-      createTime: ts(500),
-    } as any);
-    expect(ch.id).toBe("whatsapp");
-    expect(ch.createTime).toEqual(new Date(500_000));
-    expect(ch.capabilities).toBeUndefined();
-  });
-
-  it("maps capabilities when present", () => {
-    const ch = mapChannel({
-      name: "channels/whatsapp",
-      capabilities: {
-        groups: true,
-        reactions: false,
-        edits: false,
-        deletions: true,
-        readReceipts: true,
-        typingIndicators: false,
-        supportedContentTypes: ["text/plain", "image/jpeg"],
-      },
-    } as any);
-    expect(ch.capabilities?.groups).toBe(true);
-    expect(ch.capabilities?.supportedContentTypes).toEqual([
-      "text/plain",
-      "image/jpeg",
-    ]);
-  });
-
-  it("copies supportedContentTypes as a new array", () => {
-    const input = {
-      name: "channels/x",
-      capabilities: {
-        supportedContentTypes: ["text/plain"],
-        groups: false,
-        reactions: false,
-        edits: false,
-        deletions: false,
-        readReceipts: false,
-        typingIndicators: false,
-      },
-    } as any;
-    const ch = mapChannel(input);
-    ch.capabilities?.supportedContentTypes.push("extra");
-    expect(input.capabilities.supportedContentTypes).toHaveLength(1);
-  });
-});
 
 // -------------------------
 // mapAccount
@@ -114,36 +60,40 @@ describe("mapAccount", () => {
 // -------------------------
 
 describe("mapConnector", () => {
-  it("maps nested account and extracts connector id", () => {
+  it("maps all fields and extracts connector id", () => {
     const conn = mapConnector({
       name: "connectors/conn1",
-      account: protoAccount,
+      kind: 1,
       state: 1,
+      readiness: 1,
+      provisionedResources: ["connectors/conn1/provisionedResources/res1"],
+      webhookUrl: "https://example.com/webhook",
+      displayName: "My Connector",
       channelConfig: { case: undefined, value: undefined },
       tags: ["production"],
+      errorMessage: "",
       createTime: ts(100),
       updateTime: ts(200),
     } as any);
     expect(conn.id).toBe("conn1");
-    expect(conn.account?.id).toBe("acc1");
+    expect(conn.kind).toBe(1);
+    expect(conn.readiness).toBe(1);
+    expect(conn.provisionedResources).toEqual(["res1"]);
+    expect(conn.webhookUrl).toBe("https://example.com/webhook");
+    expect(conn.displayName).toBe("My Connector");
     expect(conn.tags).toEqual(["production"]);
     expect(conn.state).toBe(1);
-  });
-
-  it("returns undefined account when account is missing", () => {
-    const conn = mapConnector({
-      name: "connectors/x",
-      state: 0,
-      channelConfig: { case: undefined, value: undefined },
-      tags: [],
-    } as any);
-    expect(conn.account).toBeUndefined();
   });
 
   it("copies tags as a new array", () => {
     const proto = {
       name: "connectors/x",
+      kind: 0,
       state: 1,
+      readiness: 0,
+      provisionedResources: [],
+      webhookUrl: "",
+      displayName: "",
       channelConfig: { case: undefined, value: undefined },
       tags: ["a"],
     } as any;
@@ -155,7 +105,12 @@ describe("mapConnector", () => {
   it("maps errorMessage when present", () => {
     const conn = mapConnector({
       name: "connectors/x",
+      kind: 0,
       state: 4,
+      readiness: 0,
+      provisionedResources: [],
+      webhookUrl: "",
+      displayName: "",
       channelConfig: { case: undefined, value: undefined },
       tags: [],
       errorMessage: "token expired",
@@ -166,12 +121,82 @@ describe("mapConnector", () => {
   it("omits errorMessage when empty string", () => {
     const conn = mapConnector({
       name: "connectors/x",
+      kind: 0,
       state: 1,
+      readiness: 0,
+      provisionedResources: [],
+      webhookUrl: "",
+      displayName: "",
       channelConfig: { case: undefined, value: undefined },
       tags: [],
       errorMessage: "",
     } as any);
     expect(conn.errorMessage).toBeUndefined();
+  });
+});
+
+// -------------------------
+// mapTemplate
+// -------------------------
+
+describe("mapTemplate", () => {
+  it("parses connectorId and id from resource name", () => {
+    const tmpl = mapTemplate({
+      name: "connectors/conn1/templates/tmpl1",
+      templateName: "Hello World",
+      language: "en_US",
+      category: 1,
+      componentsJson: "[]",
+      status: 2,
+      rejectionReason: "Policy violation",
+      externalId: "ext-1",
+      createTime: ts(100),
+      updateTime: ts(200),
+    } as any);
+    expect(tmpl.connectorId).toBe("conn1");
+    expect(tmpl.id).toBe("tmpl1");
+    expect(tmpl.templateName).toBe("Hello World");
+    expect(tmpl.language).toBe("en_US");
+    expect(tmpl.category).toBe(1);
+    expect(tmpl.status).toBe(2);
+    expect(tmpl.rejectionReason).toBe("Policy violation");
+    expect(tmpl.externalId).toBe("ext-1");
+    expect(tmpl.createTime).toEqual(new Date(100_000));
+    expect(tmpl.updateTime).toEqual(new Date(200_000));
+  });
+
+  it("normalizes empty rejectionReason to undefined", () => {
+    const tmpl = mapTemplate({
+      name: "connectors/conn1/templates/tmpl1",
+      templateName: "Hello",
+      language: "en_US",
+      category: 1,
+      componentsJson: "[]",
+      status: 2,
+      rejectionReason: "",
+      externalId: "ext-1",
+    } as any);
+    expect(tmpl.rejectionReason).toBeUndefined();
+  });
+
+  it("normalizes empty externalId to undefined", () => {
+    const tmpl = mapTemplate({
+      name: "connectors/conn1/templates/tmpl1",
+      templateName: "Hello",
+      language: "en_US",
+      category: 1,
+      componentsJson: "[]",
+      status: 2,
+      rejectionReason: "",
+      externalId: "",
+    } as any);
+    expect(tmpl.externalId).toBeUndefined();
+  });
+
+  it("throws on a malformed resource name", () => {
+    expect(() => mapTemplate({ name: "bad/name" } as any)).toThrow(
+      'Invalid template resource name: "bad/name"'
+    );
   });
 });
 
@@ -627,5 +652,37 @@ describe("mapDestination", () => {
       target: { case: undefined, value: undefined },
     } as any);
     expect(dest.filter).toBe("channel_type == 'whatsapp'");
+  });
+
+  it("maps lastTestTime and lastTestSuccess when lastTestTime is set", () => {
+    const dest = mapDestination({
+      name: "destinations/dest1",
+      displayName: "",
+      state: 1,
+      eventTypes: [],
+      filter: "",
+      payloadFormat: 1,
+      target: { case: undefined, value: undefined },
+      lastTestTime: ts(300),
+      lastTestSuccess: true,
+    } as any);
+    expect(dest.lastTestTime).toEqual(new Date(300_000));
+    expect(dest.lastTestSuccess).toBe(true);
+  });
+
+  it("sets lastTestTime and lastTestSuccess to undefined when lastTestTime is absent", () => {
+    const dest = mapDestination({
+      name: "destinations/dest1",
+      displayName: "",
+      state: 1,
+      eventTypes: [],
+      filter: "",
+      payloadFormat: 1,
+      target: { case: undefined, value: undefined },
+      lastTestTime: undefined,
+      lastTestSuccess: false,
+    } as any);
+    expect(dest.lastTestTime).toBeUndefined();
+    expect(dest.lastTestSuccess).toBeUndefined();
   });
 });
